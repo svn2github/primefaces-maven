@@ -117,7 +117,7 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		String outputPath = project.getBuild().getDirectory()
 				+ File.separator + "maven-jsf-plugin" + File.separator + "main"
 				+ File.separator + "java" + File.separator + "com"
-				+ File.separator + "prime" + File.separator + "yui4jsf"
+				+ File.separator + "prime" + File.separator + "primefaces" + File.separator + "ui"
 				+ File.separator + "component";
 
 		File componentsDirectory = new File(outputPath);
@@ -159,4 +159,8 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	protected void writeLicense(BufferedWriter writer) throws IOException{
 		writer.write(getLicense());
 	}
-}
+	
+	protected void writeFacesContextGetter(BufferedWriter writer) throws IOException {
+		writer.write("\nprotected FacesContext getFacesContext() {return FacesContext.getCurrentInstance();}\n");
+	}
+ }

@@ -92,6 +92,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeSaveState(writer, component);
 		writeRestoreState(writer, component);
 		writeTemplate(writer, component);
+		writeFacesContextGetter(writer);
 		writer.write("}");
 	}
 
@@ -99,7 +100,8 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import " + component.getParent() + ";\n");
 		writer.write("import javax.faces.context.FacesContext;\n");
 		writer.write("import javax.faces.el.ValueBinding;\n");
-		writer.write("import com.prime.yui4jsf.util.ComponentUtils;\n");
+		writer.write("import javax.faces.context.FacesContext;\n");
+		writer.write("import com.prime.primefaces.ui.util.ComponentUtils;\n");
 		
 		if(hasMethodBinding(component))
 		writer.write("import javax.faces.el.MethodBinding;\n");
