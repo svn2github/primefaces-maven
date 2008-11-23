@@ -252,7 +252,7 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writePackage(BufferedWriter writer, Component component) throws IOException {
-		writer.write("package com.prime.yui4jsf.component." + component.getParentPackagePath() + ";\n\n");
+		writer.write("package com.prime.primefaces.ui.component." + component.getParentPackagePath() + ";\n\n");
 	}
 	
 	private void writeTemplate(BufferedWriter writer, Component component) throws IOException{
