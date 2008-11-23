@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.prime.yui4jsf</groupId>
+	<artifactId>maven-project</artifactId>
+	<packaging>pom</packaging>
+	<name>Maven Project</name>
+	<version>0.7.0-SNAPSHOT</version>
+	<description>Artifacts used in the M2 build of YUI4JSF</description>
+	<url>http://yui4jsf.sourceforge.net</url>
+
+	<scm>
+		<connection>scm:svn:http://yui4jsf.svn.sourceforge.net/svnroot/yui4jsf/maven/trunk</connection>
+		<developerConnection>scm:svn:https://yui4jsf.svn.sourceforge.net/svnroot/yui4jsf/maven/trunk</developerConnection>
+		<url>http://yui4jsf.svn.sourceforge.net/viewvc/yui4jsf/maven/trunk</url>
+	</scm>
+
+	<modules>
+		<module>master-pom</module>
+		<module>maven-jsf-plugin</module>
+	</modules>
+
+</project>

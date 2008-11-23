@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.prime.primefaces</groupId>
+	<artifactId>primefaces-master</artifactId>
+	<packaging>pom</packaging>
+	<name>Master POM</name>
+	<version>0.7.0-SNAPSHOT</version>
+	<description>PrimeFaces is an opensource JSF component library providing rich set of components and other JSF goodies</description>
+	<url>http://www.prime.com.tr/primefaces</url>
+
+	<developers>
+		<developer>
+			<id>cagatay.civici</id>
+			<name>Cagatay Civici</name>
+			<email>cagatay@apache.org</email>
+			<timezone>+2</timezone>
+		</developer>
+		<developer>
+			<id>ydarcin</id>
+			<name>Yigit Darcin</name>
+			<email>ydarcin@gmail.com</email>
+			<timezone>+2</timezone>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<build>
+		<plugins>
+      		<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-compiler-plugin</artifactId>
+        		<configuration>
+          			<source>1.5</source>
+          			<target>1.5</target>
+        		</configuration>
+      		</plugin>
+		</plugins>
+	</build>
+	
+	<repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>java-net</id>
+            <url>https://maven-repository.dev.java.net/nonav/repository</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>jboss</id>
+            <url>http://repository.jboss.com/maven2</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>apache-snapshots</id>
+            <url> http://people.apache.org/repo/m2-snapshot-repository</url>
+        </repository>
+    </repositories>
+    
+</project>
