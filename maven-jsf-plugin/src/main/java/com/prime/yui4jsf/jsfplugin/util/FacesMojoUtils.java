@@ -36,10 +36,12 @@ public class FacesMojoUtils {
 	static {
 		wrapperMap = new HashMap();
 		wrapperMap.put("int", "Integer");
+		wrapperMap.put("double", "Double");
 		wrapperMap.put("boolean", "Boolean");
 		
 		toPrimitiveMap = new HashMap();
 		toPrimitiveMap.put("int", ".intValue()");
+		toPrimitiveMap.put("double", ".doubleValue()");
 		toPrimitiveMap.put("boolean", ".booleanValue()");
 	}
 	
