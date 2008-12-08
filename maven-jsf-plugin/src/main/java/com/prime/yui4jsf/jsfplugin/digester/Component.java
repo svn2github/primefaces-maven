@@ -34,13 +34,19 @@ public class Component {
 	private String rendererType;
 	private String rendererClass;
 	private Vector attributes;
-	
+	private Vector resources;
+
 	public Component() {
 		attributes = new Vector();
+		resources = new Vector();
 	}
 	
 	public void addAttribute(Attribute attribute) {
 		attributes.add(attribute);
+	}
+	
+	public void addResource(Resource resource) {
+		resources.add(resource);
 	}
 	
 	public String getTag() {
@@ -69,6 +75,13 @@ public class Component {
 	}
 	public void setAttributes(Vector attributes) {
 		this.attributes = attributes;
+	}
+	
+	public Vector getResources() {
+		return resources;
+	}
+	public void setResources(Vector resources) {
+		this.resources = resources;
 	}
 	
 	public String getComponentType() {

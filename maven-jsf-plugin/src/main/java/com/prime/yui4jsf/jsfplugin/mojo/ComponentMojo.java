@@ -31,6 +31,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 import com.prime.yui4jsf.jsfplugin.digester.Attribute;
 import com.prime.yui4jsf.jsfplugin.digester.Component;
+import com.prime.yui4jsf.jsfplugin.digester.Resource;
 import com.prime.yui4jsf.jsfplugin.util.FacesMojoUtils;
 
 /**
@@ -93,14 +94,18 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeRestoreState(writer, component);
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
+		writeResourceHolderGetter(writer);
 		writer.write("}");
 	}
-
+	
 	private void writeImports(BufferedWriter writer, Component component) throws IOException {
 		writer.write("import " + component.getParent() + ";\n");
 		writer.write("import javax.faces.context.FacesContext;\n");
 		writer.write("import javax.faces.el.ValueBinding;\n");
+		writer.write("import javax.el.ValueExpression;\n");
 		writer.write("import javax.faces.context.FacesContext;\n");
+
+		writer.write("import com.prime.primefaces.ui.resource.ResourceHandler;\n");
 		writer.write("import com.prime.primefaces.ui.util.ComponentUtils;\n");
 		
 		if(hasMethodBinding(component))
@@ -148,6 +153,14 @@ public class ComponentMojo extends BaseFacesMojo{
 			writer.write("\t\tsetRendererType(DEFAULT_RENDERER);\n");
 		else
 			writer.write("\t\tsetRendererType(null);\n");
+		
+		writer.write("\t\tResourceHandler resourceHandler = (ResourceHandler) getResourceHandler();\n");
+		
+		for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
+			Resource resource = (Resource) iterator.next();
+			
+			writer.write("\t\tresourceHandler.queueResource(\"" + resource.getName() + "\");\n");
+		}
 		
 		writer.write("\t}");
 		writer.write("\n\n");

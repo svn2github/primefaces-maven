@@ -27,6 +27,7 @@ import org.apache.maven.project.MavenProject;
 
 import com.prime.yui4jsf.jsfplugin.digester.Attribute;
 import com.prime.yui4jsf.jsfplugin.digester.Component;
+import com.prime.yui4jsf.jsfplugin.digester.Resource;
 
 /**
  * Base class for all the jsf mojos, parses the component config files and generates output directories
@@ -83,8 +84,12 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		digester.addBeanPropertySetter("component/attributes/attribute/description","description");
 		digester.addBeanPropertySetter("component/attributes/attribute/defaultValue","defaultValue");
 		digester.addBeanPropertySetter("component/attributes/attribute/ignoreInComponent","ignoreInComponent");
-		
 		digester.addSetNext("component/attributes/attribute", "addAttribute");
+		
+		digester.addObjectCreate("component/resources/resource", Resource.class);
+		digester.addBeanPropertySetter("component/resources/resource/name","name");
+		
+		digester.addSetNext("component/resources/resource", "addResource");
 		
 		return digester;
 	}
@@ -163,4 +168,13 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	protected void writeFacesContextGetter(BufferedWriter writer) throws IOException {
 		writer.write("\nprotected FacesContext getFacesContext() {return FacesContext.getCurrentInstance();}\n");
 	}
+	
+	protected void writeResourceHolderGetter(BufferedWriter writer) throws IOException{
+		writer.write("\nprotected ResourceHandler getResourceHandler() {\n");
+		writer.write("\tFacesContext facesContext = getFacesContext();\n");
+		writer.write("\tValueExpression ve = facesContext.getApplication().getExpressionFactory().createValueExpression(facesContext.getELContext(), \"#{primeFacesResourceHandler}\", ResourceHandler.class);\n");
+		writer.write("\treturn (ResourceHandler) ve.getValue(facesContext.getELContext());");
+		writer.write("}\n");
+	}
+
  }
