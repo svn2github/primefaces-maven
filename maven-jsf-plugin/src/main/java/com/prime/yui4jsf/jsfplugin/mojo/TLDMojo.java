@@ -49,7 +49,7 @@ public class TLDMojo extends BaseFacesMojo {
 		FileWriter fileWriter;
 		BufferedWriter writer;
 		String outputPath = project.getBuild().getOutputDirectory() + File.separator + "META-INF";
-		String outputFile =  "yui4jsf.tld";
+		String outputFile =  "primefaces-ui.tld";
 		
 		try {
 			File tldDirectory = new File(outputPath);
@@ -65,7 +65,7 @@ public class TLDMojo extends BaseFacesMojo {
 			writer.write("\t<tlib-version>1.0</tlib-version>\n");
 			writer.write("\t<jsp-version>1.2</jsp-version>\n");
 			writer.write("\t<short-name>yui</short-name>\n");
-			writer.write("\t<uri>http://yui4jsf.sourceforge.net</uri>\n");
+			writer.write("\t<uri>http://primefaces.prime.com.tr/ui</uri>\n");
 			
 			for (Iterator iterator = components.iterator(); iterator.hasNext();) {
 				Component component = (Component) iterator.next();
