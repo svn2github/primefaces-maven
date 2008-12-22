@@ -53,7 +53,7 @@ public class FaceletsMojo extends BaseFacesMojo{
 		FileWriter fileWriter;
 		BufferedWriter writer;
 		String outputPath = project.getBuild().getOutputDirectory() + File.separator + "META-INF";
-		String outputFile =  "primefaces-ui-taglib.xml";
+		String outputFile =  "primefaces-ui.taglib.xml";
 		
 		File outputDirectory = new File(outputPath);
 		if(!outputDirectory.exists())
