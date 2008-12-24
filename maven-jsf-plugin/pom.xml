@@ -5,13 +5,12 @@
 	<parent>
 		<groupId>com.prime.primefaces</groupId>
 		<artifactId>primefaces-master</artifactId>
-		<version>0.5.0-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.prime.primefaces</groupId>
 	<artifactId>maven-jsf-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>0.5.0-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>maven-jsf-plugin Maven Mojo</name>
 	<description>maven-jsf-plugin contains several goals that can be used to generate tlds, jsp tag sources, component sources, faces-config.xml and facelets-taglib file.</description>
 

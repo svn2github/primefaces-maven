@@ -7,15 +7,9 @@
 	<artifactId>maven-project</artifactId>
 	<packaging>pom</packaging>
 	<name>Maven Project</name>
-	<version>0.5.0-SNAPSHOT</version>
-	<description>Artifacts used in the M2 build of YUI4JSF</description>
+	<version>1.0.0-SNAPSHOT</version>
+	<description>Artifacts used in the M2 build of PrimeFaces Binaries</description>
 	<url>http://primefaces.googlecode.com/svn/trunk/</url>
-
-	<scm>
-		<connection>scm:svn:http://yui4jsf.svn.sourceforge.net/svnroot/yui4jsf/maven/trunk</connection>
-		<developerConnection>scm:svn:https://yui4jsf.svn.sourceforge.net/svnroot/yui4jsf/maven/trunk</developerConnection>
-		<url>http://primefaces.googlecode.com/svn/trunk/</url>
-	</scm>
 
 	<modules>
 		<module>master-pom</module>
