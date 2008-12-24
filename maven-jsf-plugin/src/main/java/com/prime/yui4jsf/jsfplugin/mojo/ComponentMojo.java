@@ -95,18 +95,30 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
 		writeResourceHolderGetter(writer);
+		writeEncodePartially(writer);
 		writer.write("}");
 	}
 	
+	private void writeEncodePartially(BufferedWriter writer) throws IOException{
+		writer.write("\tpublic void encodePartially(FacesContext facesContext) throws IOException {\n");
+		writer.write("\t\tRenderer renderer = getRenderer(facesContext);\n");
+		writer.write("\t\tif(renderer instanceof PartialRenderer) {\n");
+		writer.write("\t\t\t((PartialRenderer)renderer).encodePartially(facesContext, this);\n");
+		writer.write("\t\t}\n");
+		writer.write("\t}\n");
+	}
+
 	private void writeImports(BufferedWriter writer, Component component) throws IOException {
 		writer.write("import " + component.getParent() + ";\n");
 		writer.write("import javax.faces.context.FacesContext;\n");
 		writer.write("import javax.faces.el.ValueBinding;\n");
 		writer.write("import javax.el.ValueExpression;\n");
 		writer.write("import javax.faces.context.FacesContext;\n");
-
+		writer.write("import javax.faces.render.Renderer;\n");
+		writer.write("import java.io.IOException;\n");
 		writer.write("import com.prime.primefaces.ui.resource.ResourceHandler;\n");
 		writer.write("import com.prime.primefaces.ui.util.ComponentUtils;\n");
+		writer.write("import com.prime.primefaces.ui.renderkit.PartialRenderer;\n");
 		
 		if(hasMethodBinding(component))
 		writer.write("import javax.faces.el.MethodBinding;\n");
