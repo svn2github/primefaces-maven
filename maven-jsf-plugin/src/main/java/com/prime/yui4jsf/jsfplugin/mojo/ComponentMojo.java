@@ -119,6 +119,8 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import com.prime.primefaces.ui.resource.ResourceHandler;\n");
 		writer.write("import com.prime.primefaces.ui.util.ComponentUtils;\n");
 		writer.write("import com.prime.primefaces.ui.renderkit.PartialRenderer;\n");
+		if(component.isAjaxComponent())
+			writer.write("import com.prime.primefaces.ui.component.api.AjaxComponent;\n");
 		
 		if(hasMethodBinding(component))
 		writer.write("import javax.faces.el.MethodBinding;\n");
@@ -154,7 +156,11 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writeClassDeclaration(BufferedWriter writer, Component component) throws IOException {
-		writer.write("public class " + component.getComponentShortName() + " extends " + component.getParentShortName() + "{");
+		writer.write("public class " + component.getComponentShortName() + " extends " + component.getParentShortName());
+		if(component.isAjaxComponent())
+			writer.write(" implements AjaxComponent");
+		
+		writer.write(" {\n");
 		writer.write("\n\n");
 	}
 	

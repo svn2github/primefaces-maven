@@ -35,7 +35,8 @@ public class Component {
 	private String rendererClass;
 	private Vector attributes;
 	private Vector resources;
-
+	private boolean ajaxComponent;
+	
 	public Component() {
 		attributes = new Vector();
 		resources = new Vector();
@@ -118,6 +119,14 @@ public class Component {
 	public void setComponentClass(String componentClass) {
 		this.componentClass = componentClass;
 	}
+	
+	public boolean isAjaxComponent() {
+		return ajaxComponent;
+	}
+	public void setAjaxComponent(boolean ajaxComponent) {
+		this.ajaxComponent = ajaxComponent;
+	}
+
 	
 	/**
 	 * Gives the short name of the component
