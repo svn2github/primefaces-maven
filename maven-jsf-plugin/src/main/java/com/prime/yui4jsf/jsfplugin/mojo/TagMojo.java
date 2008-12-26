@@ -24,13 +24,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 import com.prime.yui4jsf.jsfplugin.digester.Attribute;
 import com.prime.yui4jsf.jsfplugin.digester.Component;
-import com.prime.yui4jsf.jsfplugin.util.FacesMojoUtils;
 
 /**
  * Generates jsp tags of components
@@ -75,45 +73,72 @@ public class TagMojo extends BaseFacesMojo {
 		writePackageImportAndClassDefinition(writer, component, tagClassName);
 		writeProperties(writer, component);
 		writeReleaseMethod(writer, component);
-		writerPropertiesMethod(writer, component);
+		writePropertiesMethod(writer, component);
 		writeComponentAndRenderers(writer, component);
 		writePropertySetters(writer, component.getAttributes());
-		writeFacesContextGetter(writer);
 
 		writer.write("}");
 		writer.close();
 	}
 
-	private void writerPropertiesMethod(BufferedWriter writer, Component component) throws IOException {
-		writer.write("\tprotected void setProperties(UIComponent uicomponent){\n");
-		writer.write("\t\tsuper.setProperties(uicomponent);\n\n");
+	private void writePropertiesMethod(BufferedWriter writer, Component component) throws IOException {
+		writer.write("\tprotected void setProperties(UIComponent comp){\n");
+		writer.write("\t\tsuper.setProperties(comp);\n\n");
+		
+		writer.write("\t\t" + component.getParent() + " component = null;\n");
+		writer.write("\t\ttry {\n");
+		writer.write("\t\t\tcomponent = (" + component.getParent() + ") comp;\n");
+		writer.write("\t\t} catch(ClassCastException cce) {\n");
+		writer.write("\t\t\tthrow new IllegalStateException(\"Component \" + component.toString() + \" not expected type.\");\n");
+		writer.write("\t\t}\n\n");
 
 		for (Iterator iterator = component.getAttributes().iterator(); iterator.hasNext();) {
 			Attribute attribute = (Attribute) iterator.next();
 			if(isIgnored(attribute, uicomponentAttributes))
 				continue;
 			
-			writer.write(getPropertySetterMethod(attribute));
+			writePropertySetterMethod(writer, attribute);
 		}
 		
 		writer.write("\t}\n");
 		writer.write("\n");
 	}
 	
-
-
-	private String getPropertySetterMethod(Attribute attribute) {
-		String method = "\t\tComponentUtils.set";
-		
-		//Handle special attributes like converter, validator, value, valueChangeListener, action, actionListener
-		if(isIgnored(attribute, specialAttributes))
-			method += StringUtils.capitalize(attribute.getName()) + "Property(getFacesContext(), uicomponent, _" + attribute.getName() + ");\n";
-		else {
-			method += FacesMojoUtils.getWrapperType(attribute.getShortTypeName()) +  "Property(getFacesContext(), uicomponent, \"" + 
-					 attribute.getName() +"\", _" + attribute.getName() +" );\n";
+	private void writePropertySetterMethod(BufferedWriter writer, Attribute attribute) throws IOException {
+		if(attribute.getType().equals("javax.faces.convert.Converter")) {
+			writer.write("\t\tif(_ " + attribute.getName() + " != null) {\n");
+			writer.write("\t\t\tif(!_" + attribute.getName() + ".isLiteralText()) {\n");
+			writer.write("\t\t\tcomponent.setValueExpression(\"converter\", _" + attribute.getName() + ");\n");
+			writer.write("\t\t} else {\n");
+			writer.write("\t\t\tjavax.faces.convert.Converter convert = FacesContext.getCurrentInstance().getApplication().createConverter(_" + attribute.getName() + ".getExpressionString());");
+			writer.write("\t\t\tcomponent.setConverter(convert);\n");
+			writer.write("\t\t}");
+		} 
+		else if(attribute.getType().equals("javax.faces.validator.Validator")) {
+			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
+			writer.write("\t\t\tcomponent.addValidator(new javax.faces.validator.MethodExpressionValidator(_" + attribute.getName() + "));\n");
+			writer.write("\t\t}\n");
 		}
-		
-		return method;
+		else if(attribute.getType().equals("javax.faces.event.ValueChangeListener")) {
+			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
+			writer.write("\t\t\tcomponent.addValueChangeListener(new javax.faces.event.MethodExpressionValueChangeListener(_" + attribute.getName() + "));\n");
+			writer.write("\t\t}\n");
+		}
+		else if(attribute.getType().equals("javax.el.MethodExpression")) {
+			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
+			writer.write("\t\t\tcomponent.setActionExpression(_" + attribute.getName() + "));\n");
+			writer.write("\t\t}\n");
+		}
+		else if(attribute.getType().equals("javax.faces.event.ActionListener")) {
+			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
+			writer.write("\t\t\tcomponent.addActionListener(javax.faces.event.MethodExpressionActionListener(_" + attribute.getName() + ")));\n");
+			writer.write("\t\t}\n");
+		}
+		else {
+			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
+			writer.write("\t\t\tcomponent.setValueExpression(\"" + attribute.getName() + "\", _" + attribute.getName() + ");\n");
+			writer.write("\t\t}\n");
+		}
 	}
 
 	private void writeReleaseMethod(BufferedWriter writer, Component component) throws IOException {
@@ -125,7 +150,7 @@ public class TagMojo extends BaseFacesMojo {
 			if(isIgnored(attribute, uicomponentAttributes))
 				continue;
 			
-			writer.write("\t\t_" + attribute.getName() +" = null;\n");
+			writer.write("\t\tthis._" + attribute.getName() +" = null;\n");
 		}
 		
 		writer.write("\t}\n\n");
@@ -137,9 +162,16 @@ public class TagMojo extends BaseFacesMojo {
 			if(isIgnored(attribute, uicomponentAttributes))
 				continue;
 			
-			writer.write("\tpublic void set"+ attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1) + "(String value){\n");
-			writer.write("\t\t_"+attribute.getName() + " = value;\n");
-			writer.write("\t}\n\n");
+			if(isMethodExpression(attribute)) {
+				writer.write("\tpublic void set"+ attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1) + "(javax.el.MethodExpression expression){\n");
+				writer.write("\t\tthis._"+attribute.getName() + " = expression;\n");
+				writer.write("\t}\n\n");
+			} else {
+				writer.write("\tpublic void set"+ attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1) + "(javax.el.ValueExpression expression){\n");
+				writer.write("\t\tthis._"+attribute.getName() + " = expression;\n");
+				writer.write("\t}\n\n");
+			}
+				
 		}
 	}
 
@@ -149,9 +181,22 @@ public class TagMojo extends BaseFacesMojo {
 			if(isIgnored(attribute, uicomponentAttributes))
 				continue;
 			
-			writer.write("\tprivate String _" + attribute.getName() +" = null;\n");
+			if(isMethodExpression(attribute))
+				writer.write("\tprivate javax.el.MethodExpression _" + attribute.getName() +";\n");
+			else
+				writer.write("\tprivate javax.el.ValueExpression _" + attribute.getName() +";\n");
 		}
 		writer.write("\n");
+	}
+	
+	private boolean isMethodExpression(Attribute attribute) {
+		String type = attribute.getType();
+		
+		if(type.equals("javax.faces.validator.Validator") || type.equals("javax.faces.event.ValueChangeListener")
+				|| type.equals("javax.el.MethodExpression"))
+			return true;
+		else
+			return false;		
 	}
 
 	private void writeComponentAndRenderers(BufferedWriter writer, Component component) throws IOException {
@@ -176,8 +221,6 @@ public class TagMojo extends BaseFacesMojo {
 
 		writer.write("import javax.faces.webapp.UIComponentELTag;\n");
 		writer.write("import javax.faces.component.UIComponent;\n");
-		writer.write("import javax.faces.context.FacesContext;\n");
-		writer.write("import com.prime.primefaces.ui.util.ComponentUtils;\n");
 		writer.write("\n");
 		
 		writer.write("public class " + tagClassName + " extends UIComponentELTag {\n");
