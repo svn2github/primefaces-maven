@@ -28,6 +28,7 @@ public class Component {
 	private String tag;
 	private String tagClass;
 	private String componentClass;
+	private String componentHandlerClass;
 	private String parent;
 	private String componentType;
 	private String componentFamily;
@@ -118,6 +119,13 @@ public class Component {
 	}
 	public void setComponentClass(String componentClass) {
 		this.componentClass = componentClass;
+	}
+	
+	public String getComponentHandlerClass() {
+		return componentHandlerClass;
+	}
+	public void setComponentHandlerClass(String componentHandlerClass) {
+		this.componentHandlerClass = componentHandlerClass;
 	}
 	
 	public boolean isAjaxComponent() {

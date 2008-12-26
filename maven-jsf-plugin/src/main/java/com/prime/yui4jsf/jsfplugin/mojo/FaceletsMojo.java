@@ -78,6 +78,18 @@ public class FaceletsMojo extends BaseFacesMojo{
 			writer.write("\t\t\t<component-type>");
 			writer.write(component.getComponentType());
 			writer.write("</component-type>\n");
+			
+			if(component.getRendererType() != null) {
+				writer.write("\t\t\t<renderer-type>");
+				writer.write(component.getRendererType());
+				writer.write("</renderer-type>\n");
+			}
+			
+			if(component.getComponentHandlerClass() != null) {
+				writer.write("\t\t\t<handler-class>");
+				writer.write(component.getComponentHandlerClass());
+				writer.write("</handler-class>\n");
+			}
 			writer.write("\t\t</component>\n");
 			writer.write("\t</tag>\n");
 		}
