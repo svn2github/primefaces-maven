@@ -30,19 +30,13 @@ import org.apache.commons.lang.StringUtils;
  */
 public class FacesMojoUtils {
 
-	public static Map wrapperMap;					//primitives and corresponding wrappers
-	public static Map toPrimitiveMap;				//Method calls to converter wrappers to primitives
+	public static Map<String,String> wrapperMap;					//primitives and corresponding wrappers
 	
 	static {
-		wrapperMap = new HashMap();
-		wrapperMap.put("int", "Integer");
-		wrapperMap.put("double", "Double");
-		wrapperMap.put("boolean", "Boolean");
-		
-		toPrimitiveMap = new HashMap();
-		toPrimitiveMap.put("int", ".intValue()");
-		toPrimitiveMap.put("double", ".doubleValue()");
-		toPrimitiveMap.put("boolean", ".booleanValue()");
+		wrapperMap = new HashMap<String,String>();
+		wrapperMap.put("java.lang.Integer", "int");
+		wrapperMap.put("java.lang.Double", "double");
+		wrapperMap.put("java.lang.Boolean", "boolean");
 	}
 	
 	public static String getWrapperType(String type) {
@@ -52,15 +46,6 @@ public class FacesMojoUtils {
 			return type;					//if none found just return the same type
 		else
 			return wrapperType;
-	}
-	
-	public static String getPrimitiveMethod(String type) {
-		String toPrimitiveMethod = (String) toPrimitiveMap.get(type);
-		
-		if(StringUtils.isBlank(toPrimitiveMethod))
-			return StringUtils.EMPTY;					//if none found just return the same type
-		else
-			return toPrimitiveMethod;
 	}
 	
 	public static boolean shouldWrap(String attributeType) {
@@ -76,8 +61,8 @@ public class FacesMojoUtils {
 	public static int getStateAllocationSize(Component component) {
 		int size = 0;
 		
-		for (Iterator iterator = component.getAttributes().iterator(); iterator.hasNext();) {
-			Attribute attribute= (Attribute) iterator.next();
+		for (Iterator<Attribute> iterator = component.getAttributes().iterator(); iterator.hasNext();) {
+			Attribute attribute= iterator.next();
 			
 			if(!attribute.isIgnored())
 				size++;

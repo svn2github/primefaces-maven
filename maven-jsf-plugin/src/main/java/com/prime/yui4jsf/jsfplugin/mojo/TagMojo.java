@@ -124,14 +124,19 @@ public class TagMojo extends BaseFacesMojo {
 			writer.write("\t\t\tcomponent.addValueChangeListener(new javax.faces.event.MethodExpressionValueChangeListener(_" + attribute.getName() + "));\n");
 			writer.write("\t\t}\n");
 		}
-		else if(attribute.getType().equals("javax.el.MethodExpression")) {
+		else if(attribute.getType().equals("javax.el.MethodExpression") && attribute.getName().equals("action")) {
 			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
-			writer.write("\t\t\tcomponent.setActionExpression(_" + attribute.getName() + "));\n");
+			writer.write("\t\t\tcomponent.setActionExpression(_" + attribute.getName() + ");\n");
 			writer.write("\t\t}\n");
 		}
 		else if(attribute.getType().equals("javax.faces.event.ActionListener")) {
 			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
-			writer.write("\t\t\tcomponent.addActionListener(javax.faces.event.MethodExpressionActionListener(_" + attribute.getName() + ")));\n");
+			writer.write("\t\t\tcomponent.addActionListener(new javax.faces.event.MethodExpressionActionListener(_" + attribute.getName() + "));\n");
+			writer.write("\t\t}\n");
+		}
+		else if(attribute.getType().equals("javax.el.MethodExpression")) {
+			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
+			writer.write("\t\t\tcomponent.set" + attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1)  + "(_" + attribute.getName() + ");\n");
 			writer.write("\t\t}\n");
 		}
 		else {
@@ -187,16 +192,6 @@ public class TagMojo extends BaseFacesMojo {
 				writer.write("\tprivate javax.el.ValueExpression _" + attribute.getName() +";\n");
 		}
 		writer.write("\n");
-	}
-	
-	private boolean isMethodExpression(Attribute attribute) {
-		String type = attribute.getType();
-		
-		if(type.equals("javax.faces.validator.Validator") || type.equals("javax.faces.event.ValueChangeListener")
-				|| type.equals("javax.el.MethodExpression"))
-			return true;
-		else
-			return false;		
 	}
 
 	private void writeComponentAndRenderers(BufferedWriter writer, Component component) throws IOException {

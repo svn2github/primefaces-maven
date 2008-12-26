@@ -167,15 +167,24 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	}
 	
 	protected void writeFacesContextGetter(BufferedWriter writer) throws IOException {
-		writer.write("\nprotected FacesContext getFacesContext() {return FacesContext.getCurrentInstance();}\n");
+		writer.write("\n\n\tprotected FacesContext getFacesContext() {return FacesContext.getCurrentInstance();}\n");
 	}
 	
 	protected void writeResourceHolderGetter(BufferedWriter writer) throws IOException{
-		writer.write("\nprotected ResourceHandler getResourceHandler() {\n");
-		writer.write("\tFacesContext facesContext = getFacesContext();\n");
-		writer.write("\tValueExpression ve = facesContext.getApplication().getExpressionFactory().createValueExpression(facesContext.getELContext(), \"#{primeFacesResourceHandler}\", ResourceHandler.class);\n");
-		writer.write("\treturn (ResourceHandler) ve.getValue(facesContext.getELContext());");
-		writer.write("}\n");
+		writer.write("\n\n\tprotected ResourceHandler getResourceHandler() {\n");
+		writer.write("\t\tFacesContext facesContext = getFacesContext();\n");
+		writer.write("\t\tValueExpression ve = facesContext.getApplication().getExpressionFactory().createValueExpression(facesContext.getELContext(), \"#{primeFacesResourceHandler}\", ResourceHandler.class);\n");
+		writer.write("\t\treturn (ResourceHandler) ve.getValue(facesContext.getELContext());");
+		writer.write("\t}\n");
 	}
-
+	
+	protected boolean isMethodExpression(Attribute attribute) {
+		String type = attribute.getType();
+		
+		if(type.equals("javax.faces.validator.Validator") || type.equals("javax.faces.event.ValueChangeListener")
+				|| type.equals("javax.el.MethodExpression") || type.equals("javax.faces.event.ActionListener"))
+			return true;
+		else
+			return false;		
+	}
  }

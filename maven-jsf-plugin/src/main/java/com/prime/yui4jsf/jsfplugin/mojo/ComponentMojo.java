@@ -111,14 +111,13 @@ public class ComponentMojo extends BaseFacesMojo{
 	private void writeImports(BufferedWriter writer, Component component) throws IOException {
 		writer.write("import " + component.getParent() + ";\n");
 		writer.write("import javax.faces.context.FacesContext;\n");
-		writer.write("import javax.faces.el.ValueBinding;\n");
 		writer.write("import javax.el.ValueExpression;\n");
-		writer.write("import javax.faces.context.FacesContext;\n");
+		writer.write("import javax.el.MethodExpression;\n");
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
 		writer.write("import com.prime.primefaces.ui.resource.ResourceHandler;\n");
-		writer.write("import com.prime.primefaces.ui.util.ComponentUtils;\n");
 		writer.write("import com.prime.primefaces.ui.renderkit.PartialRenderer;\n");
+		
 		if(component.isAjaxComponent())
 			writer.write("import com.prime.primefaces.ui.component.api.AjaxComponent;\n");
 		
@@ -149,8 +148,7 @@ public class ComponentMojo extends BaseFacesMojo{
 			if(attribute.isIgnored())
 				continue;
 			
-			String returnType = FacesMojoUtils.getWrapperType(attribute.getShortTypeName());
-			writer.write("\tprivate " + returnType + " _" + attribute.getName() + ";\n");
+			writer.write("\tprivate " + attribute.getType() + " _" + attribute.getName() + ";\n");
 		}
 		writer.write("\n");
 	}
@@ -197,41 +195,42 @@ public class ComponentMojo extends BaseFacesMojo{
 			if(attribute.isIgnored())
 				continue;
 			
-			if(isMethodBinding(attribute)) {
-				writeMethodBindingAttribute(writer, attribute);
-				
+			if(isMethodExpression(attribute)) {
+				writeMethodExpressionAttribute(writer, attribute);
 			} else {
-				//TODO:Make below a method
-				writer.write("\tpublic " + attribute.getShortTypeName() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
+				if(FacesMojoUtils.shouldWrap(attribute.getType()))
+					writer.write("\tpublic " + FacesMojoUtils.getWrapperType(attribute.getType()) + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
+				else
+					writer.write("\tpublic " + attribute.getType() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
+					
 				writer.write("\t\tif(_" + attribute.getName() + " != null )\n");
-				writer.write("\t\t\treturn _" + attribute.getName() + FacesMojoUtils.getPrimitiveMethod(attribute.getShortTypeName()) + ";\n"); 
+				writer.write("\t\t\treturn _" + attribute.getName() + ";\n"); 
 				writer.write("\n");
 				
-				writer.write("\t\tValueBinding vb = getValueBinding(\"" + attribute.getName() + "\");\n");
-				writer.write("\t\treturn vb != null ? " + getVBResolverCode(attribute.getType()) + " : " + attribute.getDefaultValue() + ";\n");
+				writer.write("\t\tValueExpression ve = getValueExpression(\"" + attribute.getName() + "\");\n");
+				writer.write("\t\treturn ve != null ? (" + attribute.getType() + ") ve.getValue(getFacesContext().getELContext())  : " + attribute.getDefaultValue() + ";\n");
 				writer.write("\t}\n");
 				
-				writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getShortTypeName() + " " + attribute.getName() + "Value) {\n");
-				if(!FacesMojoUtils.shouldWrap(attribute.getType()))
-					writer.write("\t\t_" + attribute.getName() + " = " + attribute.getName() + "Value;\n");
+				if(FacesMojoUtils.shouldWrap(attribute.getType()))
+					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.getWrapperType(attribute.getType()) + " " + attribute.getName() + ") {\n");
 				else
-					writer.write("\t\t_" + attribute.getName() + " = new " + 
-							FacesMojoUtils.getWrapperType(attribute.getShortTypeName()) + "(" + attribute.getName() + "Value);\n");
+					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " " + attribute.getName() + ") {\n");
+				
+				writer.write("\t\tthis._" + attribute.getName() + " = " + attribute.getName() + ";\n");
 				
 				writer.write("\t}\n\n");
 			}
 		}
 	}
 	
-	private void writeMethodBindingAttribute(BufferedWriter writer, Attribute attribute) throws IOException {
-		writer.write("\tpublic " + attribute.getShortTypeName() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
-		writer.write("\t\t\treturn _" + attribute.getName() + FacesMojoUtils.getPrimitiveMethod(attribute.getShortTypeName()) + ";\n"); 
-		writer.write("\t}\n");
-		
-		writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getShortTypeName() + " " + attribute.getName() + "Value) {\n");
-		writer.write("\t\t_" + attribute.getName() + " = " + attribute.getName() + "Value;\n");
-		
+	private void writeMethodExpressionAttribute(BufferedWriter writer, Attribute attribute) throws IOException {
+		writer.write("\tpublic javax.el.MethodExpression get" + attribute.getCapitalizedName() + "() {\n");
+		writer.write("\t\treturn this._" + attribute.getName() + ";\n");
 		writer.write("\t}\n\n");
+		
+		writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(javax.el.MethodExpression " + attribute.getName() + ") {\n");
+		writer.write("\t\tthis._" + attribute.getName() + " = " + attribute.getName() + ";\n");
+		writer.write("\t}\n");
 	}
 	
 	private void writeSaveState(BufferedWriter writer, Component component) throws IOException {
@@ -322,14 +321,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		}catch(FileNotFoundException fileNotFoundException) {
 		}
 		return null;
-	}
-	
-	private String getVBResolverCode(String type) {
-		if(!FacesMojoUtils.shouldWrap(type)) {
-			return "(" + type + ")" + " vb.getValue(getFacesContext())";
-		}else {
-			return "ComponentUtils.get" + FacesMojoUtils.getWrapperType(type) + "Value(getFacesContext(),vb)";
-		}
 	}
 	
 	protected boolean isBoolean(Attribute attribute) {
