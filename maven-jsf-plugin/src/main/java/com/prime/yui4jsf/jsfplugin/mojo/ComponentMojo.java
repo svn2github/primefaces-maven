@@ -212,11 +212,11 @@ public class ComponentMojo extends BaseFacesMojo{
 				writer.write("\t}\n");
 				
 				if(FacesMojoUtils.shouldWrap(attribute.getType()))
-					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.getWrapperType(attribute.getType()) + " " + attribute.getName() + ") {\n");
+					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.getWrapperType(attribute.getType()) + " _" + attribute.getName() + ") {\n");
 				else
-					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " " + attribute.getName() + ") {\n");
+					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " _" + attribute.getName() + ") {\n");
 				
-				writer.write("\t\tthis._" + attribute.getName() + " = " + attribute.getName() + ";\n");
+				writer.write("\t\tthis._" + attribute.getName() + " = _" + attribute.getName() + ";\n");
 				
 				writer.write("\t}\n\n");
 			}
@@ -228,8 +228,8 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("\t\treturn this._" + attribute.getName() + ";\n");
 		writer.write("\t}\n\n");
 		
-		writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(javax.el.MethodExpression " + attribute.getName() + ") {\n");
-		writer.write("\t\tthis._" + attribute.getName() + " = " + attribute.getName() + ";\n");
+		writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(javax.el.MethodExpression _" + attribute.getName() + ") {\n");
+		writer.write("\t\tthis._" + attribute.getName() + " = _" + attribute.getName() + ";\n");
 		writer.write("\t}\n");
 	}
 	
@@ -324,7 +324,7 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	protected boolean isBoolean(Attribute attribute) {
-		return attribute.getType().equals("boolean");
+		return attribute.getType().equals("java.lang.Boolean");
 	}
 	
 	protected boolean isMethodBinding(Attribute attribute) {

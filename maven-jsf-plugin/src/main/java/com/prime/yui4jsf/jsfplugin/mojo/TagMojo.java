@@ -85,9 +85,9 @@ public class TagMojo extends BaseFacesMojo {
 		writer.write("\tprotected void setProperties(UIComponent comp){\n");
 		writer.write("\t\tsuper.setProperties(comp);\n\n");
 		
-		writer.write("\t\t" + component.getParent() + " component = null;\n");
+		writer.write("\t\t" + component.getComponentClass() + " component = null;\n");
 		writer.write("\t\ttry {\n");
-		writer.write("\t\t\tcomponent = (" + component.getParent() + ") comp;\n");
+		writer.write("\t\t\tcomponent = (" + component.getComponentClass() + ") comp;\n");
 		writer.write("\t\t} catch(ClassCastException cce) {\n");
 		writer.write("\t\t\tthrow new IllegalStateException(\"Component \" + component.toString() + \" not expected type.\");\n");
 		writer.write("\t\t}\n\n");
