@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.prime.yui4jsf.jsfplugin.mojo;
+package org.primefaces.jsfplugin.mojo;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import com.prime.yui4jsf.jsfplugin.digester.Component;
+import org.primefaces.jsfplugin.digester.Component;
 
 /**
  * Generates taglib for facelets

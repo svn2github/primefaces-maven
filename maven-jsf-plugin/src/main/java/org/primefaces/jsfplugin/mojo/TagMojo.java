@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.prime.yui4jsf.jsfplugin.mojo;
+package org.primefaces.jsfplugin.mojo;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,8 +27,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import com.prime.yui4jsf.jsfplugin.digester.Attribute;
-import com.prime.yui4jsf.jsfplugin.digester.Component;
+import org.primefaces.jsfplugin.digester.Attribute;
+import org.primefaces.jsfplugin.digester.Component;
 
 /**
  * Generates jsp tags of components
@@ -211,7 +211,7 @@ public class TagMojo extends BaseFacesMojo {
 	}
 
 	private void writePackageImportAndClassDefinition(BufferedWriter writer, Component component, String tagClassName) throws IOException {
-		writer.write("package com.prime.primefaces.ui.component." + component.getParentPackagePath() + ";\n");
+		writer.write("package org.primefaces.ui.component." + component.getParentPackagePath() + ";\n");
 		writer.write("\n");
 
 		writer.write("import javax.faces.webapp.UIComponentELTag;\n");

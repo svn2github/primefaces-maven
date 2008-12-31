@@ -3,12 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.prime.primefaces</groupId>
+	<groupId>org.primefaces</groupId>
 	<artifactId>primefaces-master</artifactId>
 	<packaging>pom</packaging>
 	<name>Master POM</name>
 	<version>1.0.0-SNAPSHOT</version>
-	<description>PrimeFaces is an opensource JSF component library providing rich set of components and other JSF goodies</description>
+	<description>PrimeFaces is an opensource JSF component library.</description>
 	<url>http://primefaces.prime.com.tr</url>
 
 	<developers>

@@ -1,4 +1,4 @@
-package com.prime.yui4jsf.jsfplugin.digester;
+package org.primefaces.jsfplugin.digester;
 
 public class Resource {
 

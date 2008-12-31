@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.prime.yui4jsf.jsfplugin.mojo;
+package org.primefaces.jsfplugin.mojo;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,10 +29,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import com.prime.yui4jsf.jsfplugin.digester.Attribute;
-import com.prime.yui4jsf.jsfplugin.digester.Component;
-import com.prime.yui4jsf.jsfplugin.digester.Resource;
-import com.prime.yui4jsf.jsfplugin.util.FacesMojoUtils;
+import org.primefaces.jsfplugin.digester.Attribute;
+import org.primefaces.jsfplugin.digester.Component;
+import org.primefaces.jsfplugin.digester.Resource;
+import org.primefaces.jsfplugin.util.FacesMojoUtils;
 
 /**
  * Generates components
@@ -115,11 +115,11 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.el.MethodExpression;\n");
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
-		writer.write("import com.prime.primefaces.ui.resource.ResourceHandler;\n");
-		writer.write("import com.prime.primefaces.ui.renderkit.PartialRenderer;\n");
+		writer.write("import org.primefaces.ui.resource.ResourceHandler;\n");
+		writer.write("import org.primefaces.ui.renderkit.PartialRenderer;\n");
 		
 		if(component.isAjaxComponent())
-			writer.write("import com.prime.primefaces.ui.component.api.AjaxComponent;\n");
+			writer.write("import org.primefaces.ui.component.api.AjaxComponent;\n");
 		
 		if(hasMethodBinding(component))
 		writer.write("import javax.faces.el.MethodBinding;\n");
@@ -282,7 +282,7 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writePackage(BufferedWriter writer, Component component) throws IOException {
-		writer.write("package com.prime.primefaces.ui.component." + component.getParentPackagePath() + ";\n\n");
+		writer.write("package org.primefaces.ui.component." + component.getParentPackagePath() + ";\n\n");
 	}
 	
 	private void writeTemplate(BufferedWriter writer, Component component) throws IOException{

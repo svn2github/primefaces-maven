@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.prime.yui4jsf.jsfplugin.mojo;
+package org.primefaces.jsfplugin.mojo;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,9 +25,9 @@ import org.apache.commons.digester.Digester;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
 
-import com.prime.yui4jsf.jsfplugin.digester.Attribute;
-import com.prime.yui4jsf.jsfplugin.digester.Component;
-import com.prime.yui4jsf.jsfplugin.digester.Resource;
+import org.primefaces.jsfplugin.digester.Attribute;
+import org.primefaces.jsfplugin.digester.Component;
+import org.primefaces.jsfplugin.digester.Resource;
 
 /**
  * Base class for all the jsf mojos, parses the component config files and generates output directories
@@ -123,8 +123,8 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		
 		String outputPath = project.getBuild().getDirectory()
 				+ File.separator + "maven-jsf-plugin" + File.separator + "main"
-				+ File.separator + "java" + File.separator + "com"
-				+ File.separator + "prime" + File.separator + "primefaces" + File.separator + "ui"
+				+ File.separator + "java" + File.separator
+				+ File.separator + "org" + File.separator + "primefaces" + File.separator + "ui"
 				+ File.separator + "component";
 
 		File componentsDirectory = new File(outputPath);

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.prime.yui4jsf.jsfplugin.util;
+package org.primefaces.jsfplugin.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.prime.yui4jsf.jsfplugin.digester.Attribute;
-import com.prime.yui4jsf.jsfplugin.digester.Component;
+import org.primefaces.jsfplugin.digester.Attribute;
+import org.primefaces.jsfplugin.digester.Component;
 
 import org.apache.commons.lang.StringUtils;
 
