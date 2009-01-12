@@ -211,7 +211,7 @@ public class TagMojo extends BaseFacesMojo {
 	}
 
 	private void writePackageImportAndClassDefinition(BufferedWriter writer, Component component, String tagClassName) throws IOException {
-		writer.write("package org.primefaces.ui.component." + component.getParentPackagePath() + ";\n");
+		writer.write("package " + component.getPackage() + ";\n");
 		writer.write("\n");
 
 		writer.write("import javax.faces.webapp.UIComponentELTag;\n");

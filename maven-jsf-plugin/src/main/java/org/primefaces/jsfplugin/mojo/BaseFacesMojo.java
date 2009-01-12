@@ -123,19 +123,23 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		
 		String outputPath = project.getBuild().getDirectory()
 				+ File.separator + "maven-jsf-plugin" + File.separator + "main"
-				+ File.separator + "java" + File.separator
-				+ File.separator + "org" + File.separator + "primefaces" + File.separator + "ui"
-				+ File.separator + "component";
+				+ File.separator + "java" + File.separator;
 
 		File componentsDirectory = new File(outputPath);
+		
 		if(!componentsDirectory.exists())
 			componentsDirectory.mkdirs();
 
-		return outputPath; 
+		return outputPath;
 	}
 	
 	protected String createPackageDirectory(String outputPath, Component component) {
-		String packagePath = outputPath + File.separator + component.getParentPackagePath();
+		String packagePath = outputPath + File.separator;
+		String[] packageFolders = component.getPackage().split("\\.");
+		
+		for (String folder : packageFolders) {
+			packagePath = packagePath + File.separator + folder;
+		}
 		
 		File packageDirectory = new File(packagePath);
 		if(!packageDirectory.exists())
@@ -146,7 +150,7 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	
 	protected String getLicense() {
 		String license = "/*\n"+ 
-						" * Copyright 2007 The Apache Software Foundation.\n" +
+						" * Copyright 2009 Prime Technology.\n" +
 						" *\n" + 
 						" * Licensed under the Apache License, Version 2.0 (the \"License\");\n"+
 						" * you may not use this file except in compliance with the License.\n" +
