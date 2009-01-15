@@ -115,7 +115,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.el.MethodExpression;\n");
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
-		writer.write("import org.primefaces.ui.resource.ResourceHandler;\n");
+		writer.write("import org.primefaces.ui.resource.ResourceHolder;\n");
 		writer.write("import org.primefaces.ui.renderkit.PartialRenderer;\n");
 		
 		if(component.isAjaxComponent())
@@ -170,16 +170,16 @@ public class ComponentMojo extends BaseFacesMojo{
 		else
 			writer.write("\t\tsetRendererType(null);\n");
 		
-		writer.write("\t\tResourceHandler resourceHandler = getResourceHandler();\n");
-		writer.write("\t\tif(resourceHandler != null) {\n");
+		writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
+		writer.write("\t\tif(resourceHolder != null) {\n");
 		
 		for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
 			Resource resource = (Resource) iterator.next();
 			
-			writer.write("\t\t\tresourceHandler.queueResource(\"" + resource.getName() + "\");\n");
+			writer.write("\t\t\tresourceHolder.addResource(\"" + resource.getName() + "\");\n");
 		}
 		
-		writer.write("\t\t}");
+		writer.write("\t\t}\n");
 		
 		writer.write("\t}");
 		writer.write("\n\n");

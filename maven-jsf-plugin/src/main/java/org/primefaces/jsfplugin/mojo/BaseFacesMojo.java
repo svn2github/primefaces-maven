@@ -176,12 +176,12 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	}
 	
 	protected void writeResourceHolderGetter(BufferedWriter writer) throws IOException{
-		writer.write("\n\tprotected ResourceHandler getResourceHandler() {\n");
+		writer.write("\n\tprotected ResourceHolder getResourceHolder() {\n");
 		writer.write("\t\tFacesContext facesContext = getFacesContext();\n");
 		writer.write("\t\tif(facesContext == null)\n");
 		writer.write("\t\t\treturn null;\n\n");
-		writer.write("\t\tValueExpression ve = facesContext.getApplication().getExpressionFactory().createValueExpression(facesContext.getELContext(), \"#{primeFacesResourceHandler}\", ResourceHandler.class);\n");
-		writer.write("\n\t\treturn (ResourceHandler) ve.getValue(facesContext.getELContext());");
+		writer.write("\t\tValueExpression ve = facesContext.getApplication().getExpressionFactory().createValueExpression(facesContext.getELContext(), \"#{primeFacesResourceHolder}\", ResourceHolder.class);\n");
+		writer.write("\n\t\treturn (ResourceHolder) ve.getValue(facesContext.getELContext());");
 		writer.write("\n\t}\n");
 	}
 	
