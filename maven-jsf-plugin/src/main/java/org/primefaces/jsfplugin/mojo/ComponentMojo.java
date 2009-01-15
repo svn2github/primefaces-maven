@@ -100,9 +100,9 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writeEncodePartially(BufferedWriter writer) throws IOException{
-		writer.write("\tpublic void encodePartially(FacesContext facesContext) throws IOException {\n");
+		writer.write("\n\tpublic void encodePartially(FacesContext facesContext) throws IOException {\n");
 		writer.write("\t\tRenderer renderer = getRenderer(facesContext);\n");
-		writer.write("\t\tif(renderer instanceof PartialRenderer) {\n");
+		writer.write("\n\t\tif(renderer instanceof PartialRenderer) {\n");
 		writer.write("\t\t\t((PartialRenderer)renderer).encodePartially(facesContext, this);\n");
 		writer.write("\t\t}\n");
 		writer.write("\t}\n");

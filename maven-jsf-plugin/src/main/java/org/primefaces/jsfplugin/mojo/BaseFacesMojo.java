@@ -172,15 +172,15 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	}
 	
 	protected void writeFacesContextGetter(BufferedWriter writer) throws IOException {
-		writer.write("\n\n\tprotected FacesContext getFacesContext() {return FacesContext.getCurrentInstance();}\n");
+		writer.write("\n\tprotected FacesContext getFacesContext() {\n\t\treturn FacesContext.getCurrentInstance();\n\t}\n");
 	}
 	
 	protected void writeResourceHolderGetter(BufferedWriter writer) throws IOException{
-		writer.write("\n\n\tprotected ResourceHandler getResourceHandler() {\n");
+		writer.write("\n\tprotected ResourceHandler getResourceHandler() {\n");
 		writer.write("\t\tFacesContext facesContext = getFacesContext();\n");
 		writer.write("\t\tValueExpression ve = facesContext.getApplication().getExpressionFactory().createValueExpression(facesContext.getELContext(), \"#{primeFacesResourceHandler}\", ResourceHandler.class);\n");
-		writer.write("\t\treturn (ResourceHandler) ve.getValue(facesContext.getELContext());");
-		writer.write("\t}\n");
+		writer.write("\n\t\treturn (ResourceHandler) ve.getValue(facesContext.getELContext());");
+		writer.write("\n\t}\n");
 	}
 	
 	protected boolean isMethodExpression(Attribute attribute) {
