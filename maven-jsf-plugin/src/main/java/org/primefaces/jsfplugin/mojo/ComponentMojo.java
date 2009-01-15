@@ -170,13 +170,16 @@ public class ComponentMojo extends BaseFacesMojo{
 		else
 			writer.write("\t\tsetRendererType(null);\n");
 		
-		writer.write("\t\tResourceHandler resourceHandler = (ResourceHandler) getResourceHandler();\n");
+		writer.write("\t\tResourceHandler resourceHandler = getResourceHandler();\n");
+		writer.write("\t\tif(resourceHandler != null) {\n");
 		
 		for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
 			Resource resource = (Resource) iterator.next();
 			
-			writer.write("\t\tresourceHandler.queueResource(\"" + resource.getName() + "\");\n");
+			writer.write("\t\t\tresourceHandler.queueResource(\"" + resource.getName() + "\");\n");
 		}
+		
+		writer.write("\t\t}");
 		
 		writer.write("\t}");
 		writer.write("\n\n");
