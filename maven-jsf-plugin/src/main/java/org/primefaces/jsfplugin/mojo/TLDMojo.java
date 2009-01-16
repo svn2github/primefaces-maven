@@ -64,7 +64,7 @@ public class TLDMojo extends BaseFacesMojo {
 			writer.write("<taglib>\n");
 			writer.write("\t<tlib-version>1.0</tlib-version>\n");
 			writer.write("\t<jsp-version>1.2</jsp-version>\n");
-			writer.write("\t<short-name>yui</short-name>\n");
+			writer.write("\t<short-name>p</short-name>\n");
 			writer.write("\t<uri>http://primefaces.prime.com.tr/ui</uri>\n");
 			
 			for (Iterator iterator = components.iterator(); iterator.hasNext();) {
