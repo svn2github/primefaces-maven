@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Apache Software Foundation.
+ * Copyright 2009 Prime Technology.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.primefaces.jsfplugin.digester.Component;
 
 /**
- * Generates faces-config.xml
- * 
- * @author Latest modification by $Author: cagatay_civici $
- * @version $Revision: 1279 $ $Date: 2008-04-20 13:06:50 +0100 (Sun, 20 Apr 2008) $
- * 
  * @goal generate-faces-config
  */
 public class FacesConfigMojo extends BaseFacesMojo{
