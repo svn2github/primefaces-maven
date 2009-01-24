@@ -14,6 +14,12 @@
 	<name>maven-jsf-plugin Maven Mojo</name>
 	<description>maven-jsf-plugin contains several goals that can be used to generate tlds, jsp tag sources, component sources, faces-config.xml and facelets-taglib file.</description>
 
+	<scm>
+		<connection>scm:svn:http://primefaces.googlecode.com/svn/maven/trunk/maven-jsf-plugin</connection>
+		<developerConnection>scm:svn:https://primefaces.googlecode.com/svn/maven/trunk/maven-jsf-plugin/</developerConnection>
+		<url>http://code.google.com/p/primefaces/source/browse/#svn/maven/trunk/maven-jsf-plugin</url>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

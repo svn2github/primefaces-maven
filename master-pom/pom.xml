@@ -10,6 +10,12 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<description>PrimeFaces is an opensource JSF component library.</description>
 	<url>http://primefaces.prime.com.tr</url>
+	
+	<scm>
+		<connection>scm:svn:http://primefaces.googlecode.com/svn/maven/trunk/master-pom/</connection>
+		<developerConnection>scm:svn:https://primefaces.googlecode.com/svn/maven/trunk/master-pom/</developerConnection>
+		<url>http://code.google.com/p/primefaces/source/browse/#svn/maven/trunk/master-pom</url>
+	</scm>
 
 	<developers>
 		<developer>
