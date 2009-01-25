@@ -7,7 +7,7 @@
 	<artifactId>primefaces-master</artifactId>
 	<packaging>pom</packaging>
 	<name>Master POM</name>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<description>PrimeFaces is an opensource JSF component library.</description>
 	<url>http://primefaces.prime.com.tr</url>
 	
@@ -22,7 +22,7 @@
 			<id>cagatay.civici</id>
 			<name>Cagatay Civici</name>
 			<email>cagatay@apache.org</email>
-			<timezone>+2</timezone>
+			<timezone>0</timezone>
 		</developer>
 		<developer>
 			<id>ydarcin</id>
