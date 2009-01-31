@@ -90,7 +90,9 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
 		writeResourceHolderGetter(writer);
-		writeEncodePartially(writer);
+		if(component.isAjaxComponent()) {
+			writeEncodePartially(writer);
+		}
 		writer.write("}");
 	}
 	
