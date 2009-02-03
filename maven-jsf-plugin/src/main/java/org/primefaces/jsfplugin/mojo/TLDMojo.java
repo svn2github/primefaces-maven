@@ -57,8 +57,7 @@ public class TLDMojo extends BaseFacesMojo {
 			writer.write("<!DOCTYPE taglib PUBLIC \"-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN\"\n"); 
 			writer.write("\t\t\t\t\"http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd\">\n");
 			writer.write("<taglib>\n");
-			writer.write("\t<tlib-version>1.0</tlib-version>\n");
-			writer.write("\t<jsp-version>1.2</jsp-version>\n");
+			writer.write("\t<tlib-version>1.2</tlib-version>\n");
 			writer.write("\t<short-name>p</short-name>\n");
 			writer.write("\t<uri>http://primefaces.prime.com.tr/ui</uri>\n");
 			
@@ -77,7 +76,7 @@ public class TLDMojo extends BaseFacesMojo {
 					writer.write("\t\t\t<required>" + attribute.getRequired() + "</required>\n");
 					writer.write("\t\t\t<rtexprvalue>false</rtexprvalue>\n");
 					writer.write("\t\t\t<type>java.lang.String</type>\n");
-					writer.write("\t\t\t<description>" + attribute.getDescription() + "</description>\n");
+					writer.write("\t\t\t<description><![CDATA[" + attribute.getDescription() + "]]></description>\n");
 					writer.write("\t\t</attribute>\n");
 				}
 				writer.write("\t</tag>\n");
