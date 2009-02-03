@@ -22,30 +22,26 @@ import java.util.Map;
 import org.primefaces.jsfplugin.digester.Attribute;
 import org.primefaces.jsfplugin.digester.Component;
 
-import org.apache.commons.lang.StringUtils;
-
 public class FacesMojoUtils {
 
-	public static Map<String,String> wrapperMap;					//primitives and corresponding wrappers
+	public static Map<String,String> primitiveMap;					//primitives and corresponding wrappers
 	
 	static {
-		wrapperMap = new HashMap<String,String>();
-		wrapperMap.put("java.lang.Integer", "int");
-		wrapperMap.put("java.lang.Double", "double");
-		wrapperMap.put("java.lang.Boolean", "boolean");
+		primitiveMap = new HashMap<String,String>();
+		primitiveMap.put("java.lang.Integer", "int");
+		primitiveMap.put("java.lang.Double", "double");
+		primitiveMap.put("java.lang.Boolean", "boolean");
 	}
 	
-	public static String getWrapperType(String type) {
-		String wrapperType = (String) wrapperMap.get(type);
-		
-		if(StringUtils.isBlank(wrapperType))
-			return type;					//if none found just return the same type
+	public static String toPrimitive(String type) {
+		if(!primitiveMap.containsKey(type))
+			return type;
 		else
-			return wrapperType;
+			return primitiveMap.get(type);
 	}
 	
-	public static boolean shouldWrap(String attributeType) {
-		return wrapperMap.containsKey(attributeType);
+	public static boolean shouldPrimitize(String type) {
+		return primitiveMap.containsKey(type);
 	}
 	
 	/**
