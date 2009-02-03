@@ -76,18 +76,22 @@ public class TLDMojo extends BaseFacesMojo {
 					if(attribute.getDescription() != null)
 						writer.write("\t\t\t<description><![CDATA[" + attribute.getDescription() + "]]></description>\n");
 					
-					if(attribute.isDeferredValue()) {
-						writer.write("\t\t\t<deferred-value>\n");
-						writer.write("\t\t\t\t<type>");
-						writer.write(FacesMojoUtils.toPrimitive(attribute.getType()));
-						writer.write("</type>\n");
-						writer.write("\t\t\t</deferred-value>\n");
+					if(attribute.isLiteral()) {
+						 writer.write("\t\t\t<rtexprvalue>false</rtexprvalue>\n");
 					} else {
-						writer.write("\t\t\t<deferred-method>\n");
-						writer.write("\t\t\t\t<method-signature>");
-						writer.write(attribute.getMethodSignature());
-						writer.write("</method-signature>\n");
-						writer.write("\t\t\t</deferred-method>\n");
+						if(attribute.isDeferredValue()) {
+							writer.write("\t\t\t<deferred-value>\n");
+							writer.write("\t\t\t\t<type>");
+							writer.write(FacesMojoUtils.toPrimitive(attribute.getType()));
+							writer.write("</type>\n");
+							writer.write("\t\t\t</deferred-value>\n");
+						} else {
+							writer.write("\t\t\t<deferred-method>\n");
+							writer.write("\t\t\t\t<method-signature>");
+							writer.write(attribute.getMethodSignature());
+							writer.write("</method-signature>\n");
+							writer.write("\t\t\t</deferred-method>\n");
+						}
 					}
 
 					writer.write("\t\t</attribute>\n");

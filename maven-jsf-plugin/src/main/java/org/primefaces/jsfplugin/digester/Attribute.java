@@ -20,12 +20,13 @@ import org.apache.commons.lang.StringUtils;
 public class Attribute {
 
 	private String name;
-	private String required;;
+	private String required;
 	private String type;
 	private String description;
 	private String defaultValue;
 	private String ignoreInComponent = "false";
 	private String methodSignature;
+	private boolean literal;
 	
 	public String getName() {
 		return name;
@@ -82,6 +83,13 @@ public class Attribute {
 		this.methodSignature = methodSignature;
 	}
 	
+	public boolean isLiteral() {
+		return literal;
+	}
+	public void setLiteral(boolean literal) {
+		this.literal = literal;
+	}
+	
 	/**
 	 * Gives the short name of the attribute
 	 * e.g. java.lang.String will return String
@@ -104,6 +112,6 @@ public class Attribute {
 	}
 	
 	public boolean isDeferredValue() {
-		return getMethodSignature() == null;
+		return getMethodSignature() == null && !isLiteral();
 	}
 }
