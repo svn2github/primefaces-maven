@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.primefaces.jsfplugin.digester.Attribute;
 import org.primefaces.jsfplugin.digester.Component;
+import org.primefaces.jsfplugin.util.FacesMojoUtils;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -54,9 +55,7 @@ public class TLDMojo extends BaseFacesMojo {
 			writer = new BufferedWriter(fileWriter);
 			
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			writer.write("<!DOCTYPE taglib PUBLIC \"-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN\"\n"); 
-			writer.write("\t\t\t\t\"http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd\">\n");
-			writer.write("<taglib>\n");
+			writer.write("<taglib xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd\" xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"2.1\">\n");
 			writer.write("\t<tlib-version>1.2</tlib-version>\n");
 			writer.write("\t<short-name>p</short-name>\n");
 			writer.write("\t<uri>http://primefaces.prime.com.tr/ui</uri>\n");
@@ -74,9 +73,23 @@ public class TLDMojo extends BaseFacesMojo {
 					writer.write("\t\t<attribute>\n");
 					writer.write("\t\t\t<name>" + attribute.getName() + "</name>\n");
 					writer.write("\t\t\t<required>" + attribute.getRequired() + "</required>\n");
-					writer.write("\t\t\t<rtexprvalue>false</rtexprvalue>\n");
-					writer.write("\t\t\t<type>java.lang.String</type>\n");
-					writer.write("\t\t\t<description><![CDATA[" + attribute.getDescription() + "]]></description>\n");
+					if(attribute.getDescription() != null)
+						writer.write("\t\t\t<description><![CDATA[" + attribute.getDescription() + "]]></description>\n");
+					
+					if(attribute.isDeferredValue()) {
+						writer.write("\t\t\t<deferred-value>\n");
+						writer.write("\t\t\t\t<type>");
+						writer.write(FacesMojoUtils.toPrimitive(attribute.getType()));
+						writer.write("</type>\n");
+						writer.write("\t\t\t</deferred-value>\n");
+					} else {
+						writer.write("\t\t\t<deferred-method>\n");
+						writer.write("\t\t\t\t<method-signature>");
+						writer.write(attribute.getMethodSignature());
+						writer.write("</method-signature>\n");
+						writer.write("\t\t\t</deferred-method>\n");
+					}
+
 					writer.write("\t\t</attribute>\n");
 				}
 				writer.write("\t</tag>\n");

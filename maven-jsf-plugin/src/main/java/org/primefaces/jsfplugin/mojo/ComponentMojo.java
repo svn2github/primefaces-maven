@@ -198,8 +198,8 @@ public class ComponentMojo extends BaseFacesMojo{
 			if(isMethodExpression(attribute)) {
 				writeMethodExpressionAttribute(writer, attribute);
 			} else {
-				if(FacesMojoUtils.shouldWrap(attribute.getType()))
-					writer.write("\tpublic " + FacesMojoUtils.getWrapperType(attribute.getType()) + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
+				if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
+					writer.write("\tpublic " + FacesMojoUtils.toPrimitive(attribute.getType()) + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
 				else
 					writer.write("\tpublic " + attribute.getType() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
 					
@@ -211,8 +211,8 @@ public class ComponentMojo extends BaseFacesMojo{
 				writer.write("\t\treturn ve != null ? (" + attribute.getType() + ") ve.getValue(getFacesContext().getELContext())  : " + attribute.getDefaultValue() + ";\n");
 				writer.write("\t}\n");
 				
-				if(FacesMojoUtils.shouldWrap(attribute.getType()))
-					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.getWrapperType(attribute.getType()) + " _" + attribute.getName() + ") {\n");
+				if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
+					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.toPrimitive(attribute.getType()) + " _" + attribute.getName() + ") {\n");
 				else
 					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " _" + attribute.getName() + ") {\n");
 				
@@ -272,7 +272,7 @@ public class ComponentMojo extends BaseFacesMojo{
 				continue;
 			
 			if(!isMethodBinding(attribute))
-				writer.write("\t\t_" + attribute.getName() + " = (" + FacesMojoUtils.getWrapperType(attribute.getShortTypeName()) + ") values[" + attributeNo + "];\n");
+				writer.write("\t\t_" + attribute.getName() + " = (" + FacesMojoUtils.toPrimitive(attribute.getShortTypeName()) + ") values[" + attributeNo + "];\n");
 			else
 				writer.write("\t\t_" + attribute.getName() + " = (MethodBinding) restoreAttachedState(context, values[" + attributeNo + "]);\n");
 				

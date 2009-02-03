@@ -25,6 +25,7 @@ public class Attribute {
 	private String description;
 	private String defaultValue;
 	private String ignoreInComponent = "false";
+	private String methodSignature;
 	
 	public String getName() {
 		return name;
@@ -74,6 +75,13 @@ public class Attribute {
 		this.ignoreInComponent = ignoreInComponent;
 	}
 	
+	public String getMethodSignature() {
+		return methodSignature;
+	}
+	public void setMethodSignature(String methodSignature) {
+		this.methodSignature = methodSignature;
+	}
+	
 	/**
 	 * Gives the short name of the attribute
 	 * e.g. java.lang.String will return String
@@ -93,5 +101,9 @@ public class Attribute {
 	
 	public boolean isIgnored() {
 		return Boolean.valueOf(ignoreInComponent).booleanValue();
+	}
+	
+	public boolean isDeferredValue() {
+		return getMethodSignature() == null;
 	}
 }

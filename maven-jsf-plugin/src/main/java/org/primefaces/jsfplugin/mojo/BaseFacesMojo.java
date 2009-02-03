@@ -86,6 +86,7 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		digester.addBeanPropertySetter("component/attributes/attribute/description","description");
 		digester.addBeanPropertySetter("component/attributes/attribute/defaultValue","defaultValue");
 		digester.addBeanPropertySetter("component/attributes/attribute/ignoreInComponent","ignoreInComponent");
+		digester.addBeanPropertySetter("component/attributes/attribute/method-signature","methodSignature");
 		digester.addSetNext("component/attributes/attribute", "addAttribute");
 		
 		digester.addObjectCreate("component/resources/resource", Resource.class);
