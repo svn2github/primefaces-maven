@@ -134,6 +134,11 @@ public class TagMojo extends BaseFacesMojo {
 			writer.write("\t\t\tcomponent.set" + attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1)  + "(_" + attribute.getName() + ");\n");
 			writer.write("\t\t}\n");
 		}
+		else if(attribute.isLiteral()) {
+			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
+			writer.write("\t\t\tcomponent.set" + attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1)  + "(_" + attribute.getName() + ");\n");
+			writer.write("\t\t}\n");
+		}
 		else {
 			writer.write("\t\tif(_" + attribute.getName() + " != null) {\n");
 			writer.write("\t\t\tcomponent.setValueExpression(\"" + attribute.getName() + "\", _" + attribute.getName() + ");\n");
@@ -162,16 +167,22 @@ public class TagMojo extends BaseFacesMojo {
 			if(isIgnored(attribute, uicomponentAttributes))
 				continue;
 			
-			if(isMethodExpression(attribute)) {
-				writer.write("\tpublic void set"+ attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1) + "(javax.el.MethodExpression expression){\n");
-				writer.write("\t\tthis._"+attribute.getName() + " = expression;\n");
-				writer.write("\t}\n\n");
-			} else {
-				writer.write("\tpublic void set"+ attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1) + "(javax.el.ValueExpression expression){\n");
-				writer.write("\t\tthis._"+attribute.getName() + " = expression;\n");
+			if(attribute.isLiteral()) {
+				writer.write("\tpublic void set"+ attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1) + "(java.lang.String value){\n");
+				writer.write("\t\tthis._"+attribute.getName() + " = value;\n");
 				writer.write("\t}\n\n");
 			}
-				
+			else {
+				if(isMethodExpression(attribute)) {
+					writer.write("\tpublic void set"+ attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1) + "(javax.el.MethodExpression expression){\n");
+					writer.write("\t\tthis._"+attribute.getName() + " = expression;\n");
+					writer.write("\t}\n\n");
+				} else {
+					writer.write("\tpublic void set"+ attribute.getName().substring(0,1).toUpperCase() + attribute.getName().substring(1) + "(javax.el.ValueExpression expression){\n");
+					writer.write("\t\tthis._"+attribute.getName() + " = expression;\n");
+					writer.write("\t}\n\n");
+				}
+			}	
 		}
 	}
 
@@ -181,10 +192,14 @@ public class TagMojo extends BaseFacesMojo {
 			if(isIgnored(attribute, uicomponentAttributes))
 				continue;
 			
-			if(isMethodExpression(attribute))
-				writer.write("\tprivate javax.el.MethodExpression _" + attribute.getName() +";\n");
-			else
-				writer.write("\tprivate javax.el.ValueExpression _" + attribute.getName() +";\n");
+			if(attribute.isLiteral())
+				writer.write("\tprivate java.lang.String _" + attribute.getName() +";\n");
+			else {
+				if(isMethodExpression(attribute))
+					writer.write("\tprivate javax.el.MethodExpression _" + attribute.getName() +";\n");
+				else
+					writer.write("\tprivate javax.el.ValueExpression _" + attribute.getName() +";\n");
+			}
 		}
 		writer.write("\n");
 	}
