@@ -20,11 +20,11 @@ import org.apache.commons.lang.StringUtils;
 public class Attribute {
 
 	private String name;
-	private String required;
+	private boolean required = false;
 	private String type;
 	private String description;
 	private String defaultValue;
-	private String ignoreInComponent = "false";
+	private boolean ignoreInComponent = false;
 	private String methodSignature;
 	private boolean literal;
 	
@@ -35,10 +35,10 @@ public class Attribute {
 		this.name = name;
 	}
 	
-	public String getRequired() {
+	public boolean isRequired() {
 		return required;
 	}
-	public void setRequired(String required) {
+	public void setRequired(boolean required) {
 		this.required = required;
 	}
 	
@@ -69,10 +69,10 @@ public class Attribute {
 		this.defaultValue = defaultValue;
 	}
 	
-	public String getIgnoreInComponent() {
+	public boolean isIgnoreInComponent() {
 		return ignoreInComponent;
 	}
-	public void setIgnoreInComponent(String ignoreInComponent) {
+	public void setIgnoreInComponent(boolean ignoreInComponent) {
 		this.ignoreInComponent = ignoreInComponent;
 	}
 	
@@ -108,7 +108,7 @@ public class Attribute {
 	}
 	
 	public boolean isIgnored() {
-		return Boolean.valueOf(ignoreInComponent).booleanValue();
+		return ignoreInComponent;
 	}
 	
 	public boolean isDeferredValue() {
