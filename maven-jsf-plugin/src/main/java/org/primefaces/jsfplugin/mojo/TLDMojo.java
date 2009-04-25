@@ -15,9 +15,13 @@
  */
 package org.primefaces.jsfplugin.mojo;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,6 +37,11 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public class TLDMojo extends BaseFacesMojo {
 
+	/**
+	 * @parameter
+	 */
+	protected String standardTLD;
+	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating TLD");
 		
@@ -59,6 +68,8 @@ public class TLDMojo extends BaseFacesMojo {
 			writer.write("\t<tlib-version>1.2</tlib-version>\n");
 			writer.write("\t<short-name>p</short-name>\n");
 			writer.write("\t<uri>http://primefaces.prime.com.tr/ui</uri>\n");
+			
+			writeStandardTLD(writer);
 			
 			for (Iterator iterator = components.iterator(); iterator.hasNext();) {
 				Component component = (Component) iterator.next();
@@ -103,5 +114,21 @@ public class TLDMojo extends BaseFacesMojo {
 		}catch(Exception exception) {
 			getLog().error( exception.getMessage() );
 		}
-	}	
+	}
+	
+	private void writeStandardTLD(BufferedWriter writer) throws IOException{
+		try {
+			File template = new File(project.getBasedir() + File.separator + standardTLD);
+			FileReader fileReader = new FileReader(template);
+			BufferedReader reader = new BufferedReader(fileReader);
+			String line = null;
+			
+			while((line = reader.readLine()) != null) {
+				writer.write(line);
+				writer.write("\n");
+			}
+		}catch(FileNotFoundException fileNotFoundException) {
+			return;
+		}
+	}
 }

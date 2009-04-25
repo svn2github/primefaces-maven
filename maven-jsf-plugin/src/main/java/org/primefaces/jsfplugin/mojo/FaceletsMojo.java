@@ -15,8 +15,11 @@
  */
 package org.primefaces.jsfplugin.mojo;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
@@ -32,6 +35,11 @@ import org.primefaces.jsfplugin.digester.Component;
  */
 public class FaceletsMojo extends BaseFacesMojo{
 
+	/**
+	 * @parameter
+	 */
+	protected String standardFaceletsTaglib;
+	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating facelets-taglib");
 		
@@ -63,8 +71,10 @@ public class FaceletsMojo extends BaseFacesMojo{
 		writer.write("<facelet-taglib>\n\n");
 		writer.write("\t<namespace>http://primefaces.prime.com.tr/ui</namespace>\n\n");
 		
-		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
-			Component component = (Component) iterator.next();
+		writeStandardFaceletsTaglib(writer);
+		
+		for (Iterator<Component> iterator = components.iterator(); iterator.hasNext();) {
+			Component component = iterator.next();
 			writer.write("\t<tag>\n");
 			writer.write("\t\t<tag-name>");
 			writer.write(component.getTag());
@@ -93,5 +103,21 @@ public class FaceletsMojo extends BaseFacesMojo{
 		
 		writer.close();
 		fileWriter.close();
+	}
+	
+	private void writeStandardFaceletsTaglib(BufferedWriter writer) throws IOException{
+		try {
+			File template = new File(project.getBasedir() + File.separator + standardFaceletsTaglib);
+			FileReader fileReader = new FileReader(template);
+			BufferedReader reader = new BufferedReader(fileReader);
+			String line = null;
+			
+			while((line = reader.readLine()) != null) {
+				writer.write(line);
+				writer.write("\n");
+			}
+		}catch(FileNotFoundException fileNotFoundException) {
+			return;
+		}
 	}
 }
