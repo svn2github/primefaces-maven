@@ -40,6 +40,18 @@ public class FaceletsMojo extends BaseFacesMojo{
 	 */
 	protected String standardFaceletsTaglib;
 	
+	/**
+	 * @parameter
+	 * @required
+	 */
+	protected String uri;
+	
+	/**
+	 * @parameter
+	 * @required
+	 */
+	protected String shortName;
+	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating facelets-taglib");
 		
@@ -56,7 +68,7 @@ public class FaceletsMojo extends BaseFacesMojo{
 		FileWriter fileWriter;
 		BufferedWriter writer;
 		String outputPath = project.getBuild().getOutputDirectory() + File.separator + "META-INF";
-		String outputFile =  "primefaces-ui.taglib.xml";
+		String outputFile =  "primefaces-" + shortName + ".taglib.xml";
 		
 		File outputDirectory = new File(outputPath);
 		if(!outputDirectory.exists())
@@ -69,9 +81,11 @@ public class FaceletsMojo extends BaseFacesMojo{
 		writer.write("<!DOCTYPE facelet-taglib PUBLIC \"-//Sun Microsystems, Inc.//DTD Facelet\n");
 		writer.write("Taglib 1.0//EN\" \"facelet-taglib_1_0.dtd\">\n");
 		writer.write("<facelet-taglib>\n\n");
-		writer.write("\t<namespace>http://primefaces.prime.com.tr/ui</namespace>\n\n");
+		writer.write("\t<namespace>" + uri + "</namespace>\n\n");
 		
-		writeStandardFaceletsTaglib(writer);
+		if(standardFaceletsTaglib != null) {
+			writeStandardFaceletsTaglib(writer);
+		}
 		
 		for (Iterator<Component> iterator = components.iterator(); iterator.hasNext();) {
 			Component component = iterator.next();

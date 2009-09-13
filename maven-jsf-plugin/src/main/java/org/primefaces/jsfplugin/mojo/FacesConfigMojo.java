@@ -22,9 +22,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.digester.Digester;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -44,7 +46,7 @@ public class FacesConfigMojo extends BaseFacesMojo{
 		getLog().info("Generating faces-config.xml");
 		
 		try {
-			writeFacesConfig(getComponents());
+			writeFacesConfig(getAllComponents());
 			getLog().info("faces-config.xml generated successfully");
 		} catch (Exception e) {
 			getLog().info("Error occured in generating faces-config.xml");
@@ -58,10 +60,7 @@ public class FacesConfigMojo extends BaseFacesMojo{
 		String outputPath = project.getBuild().getOutputDirectory() + File.separator + "META-INF";
 		String outputFile =  "faces-config.xml";
 		
-		try {
-			File tldDirectory = new File(outputPath);
-			tldDirectory.mkdirs();
-			
+		try {			
 			fileWriter = new FileWriter(outputPath + File.separator + outputFile);	
 			writer = new BufferedWriter(fileWriter);
 			
@@ -80,12 +79,11 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	}
 
 	private void writeFacesConfigBegin(BufferedWriter writer, List components) throws IOException {
-		writer.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n\n");
-		writer.write("<!DOCTYPE faces-config PUBLIC\n");
-        writer.write("\t\t\"-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN\"\n");
-        writer.write("\t\t\"http://java.sun.com/dtd/web-facesconfig_1_1.dtd\">\n\n");
-        
-        writer.write("<faces-config xmlns=\"http://java.sun.com/JSF/Configuration\">\n\n");
+		writer.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		writer.write("<faces-config version=\"1.2\" xmlns=\"http://java.sun.com/xml/ns/javaee\"\n");
+        writer.write("\txmlns:xi=\"http://www.w3.org/2001/XInclude\"\n");
+        writer.write("\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+        writer.write("\txsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd\">\n");
 	}
 	
 	private void writeStandardConfig(BufferedWriter writer) throws IOException{
@@ -97,7 +95,7 @@ public class FacesConfigMojo extends BaseFacesMojo{
 			
 			while((line = reader.readLine()) != null) {
 				writer.write(line);
-				writer.write("\n\n");
+				writer.write("\n");
 			}
 		}catch(FileNotFoundException fileNotFoundException) {
 			return;
@@ -136,5 +134,50 @@ public class FacesConfigMojo extends BaseFacesMojo{
 		}
 		
 		writer.write("\t</render-kit>\n\n");
+	}
+	
+	protected List getAllComponents() {
+		String[] metaFolders = componentConfigsDir.split(",");
+		File[] resources = new File[0];
+		for(String path : metaFolders) {
+			File[] files = new File(project.getBasedir() + File.separator + path).listFiles();
+			resources = concat(resources, files);
+		}
+		
+		Digester digester = getDigester();
+		List components = new ArrayList();
+
+		for (int i = 0; i < resources.length; i++) {
+			try {
+				
+				File resource = resources[i];
+				if(resource.getName().endsWith(".xml")) {
+					components.add( digester.parse( resources[i]));
+				}
+				
+			} catch (Exception e) {
+				getLog().info(e.getMessage());
+				getLog().info("Error in generation");
+				return null;
+			}
+		}
+		
+		return components;
+	}
+	
+	public File[] concat(File[]... arrays) {
+		int destSize = 0;
+		for (int i = 0; i < arrays.length; i++) {
+			destSize += arrays[i].length;
+		}
+		File[] dest = new File[destSize];
+		int lastIndex = 0;
+		for (int i = 0; i < arrays.length; i++) {
+			File[] array = arrays[i];
+			System.arraycopy(array, 0, dest, lastIndex, array.length);
+			lastIndex += array.length;
+		}
+		
+		return dest;
 	}
 }

@@ -42,6 +42,18 @@ public class TLDMojo extends BaseFacesMojo {
 	 */
 	protected String standardTLD;
 	
+	/**
+	 * @parameter
+	 * @required
+	 */
+	protected String uri;
+	
+	/**
+	 * @parameter
+	 * @required
+	 */
+	protected String shortName;
+	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating TLD");
 		
@@ -54,7 +66,7 @@ public class TLDMojo extends BaseFacesMojo {
 		FileWriter fileWriter;
 		BufferedWriter writer;
 		String outputPath = project.getBuild().getOutputDirectory() + File.separator + "META-INF";
-		String outputFile =  "primefaces-ui.tld";
+		String outputFile =  "primefaces-" + shortName + ".tld";
 		
 		try {
 			File tldDirectory = new File(outputPath);
@@ -66,10 +78,12 @@ public class TLDMojo extends BaseFacesMojo {
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			writer.write("<taglib xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd\" xmlns=\"http://java.sun.com/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"2.1\">\n");
 			writer.write("\t<tlib-version>1.2</tlib-version>\n");
-			writer.write("\t<short-name>p</short-name>\n");
-			writer.write("\t<uri>http://primefaces.prime.com.tr/ui</uri>\n");
+			writer.write("\t<short-name>" + shortName + "</short-name>\n");
+			writer.write("\t<uri>" + uri + "</uri>\n");
 			
-			writeStandardTLD(writer);
+			if(standardTLD != null) {
+				writeStandardTLD(writer);
+			}
 			
 			for (Iterator iterator = components.iterator(); iterator.hasNext();) {
 				Component component = (Component) iterator.next();
