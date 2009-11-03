@@ -112,11 +112,11 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.el.MethodExpression;\n");
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
-		writer.write("import org.primefaces.ui.resource.ResourceHolder;\n");
-		writer.write("import org.primefaces.ui.renderkit.PartialRenderer;\n");
+		writer.write("import org.primefaces.resource.ResourceHolder;\n");
+		writer.write("import org.primefaces.renderkit.PartialRenderer;\n");
 		
 		if(component.isAjaxComponent())
-			writer.write("import org.primefaces.ui.component.api.AjaxComponent;\n");
+			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
 		
 		if(hasMethodBinding(component))
 		writer.write("import javax.faces.el.MethodBinding;\n");
