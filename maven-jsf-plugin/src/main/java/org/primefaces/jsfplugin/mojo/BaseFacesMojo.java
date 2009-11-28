@@ -55,6 +55,12 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	 */
 	protected String templatesDir;
 	
+	/**
+	 * @parameter
+	 * @required
+	 */
+	protected String jsfVersion;
+	
 	protected String[] uicomponentAttributes = new String[]{"id","rendered","binding"};
 	
 	protected String[] specialAttributes = new String[]{"value","converter","validator","valueChangeListener","immediate","required","action","actionListener"};
@@ -195,5 +201,9 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 			return true;
 		else
 			return false;		
+	}
+	
+	protected boolean isJSF2() {
+		return this.jsfVersion.equalsIgnoreCase("2");
 	}
  }

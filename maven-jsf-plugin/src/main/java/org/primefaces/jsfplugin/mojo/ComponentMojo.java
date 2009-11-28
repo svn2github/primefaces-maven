@@ -55,11 +55,11 @@ public class ComponentMojo extends BaseFacesMojo{
 		}
 	}
 
-	private void writeComponents(List components) throws Exception{
+	private void writeComponents(List<Component> components) throws Exception{
 		
 		String outputPath = getCreateOutputDirectory();
 		
-		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
+		for (Iterator<Component> iterator = components.iterator(); iterator.hasNext();) {
 			Component component = (Component) iterator.next();
 			getLog().info("Generating Component Source for:" + component.getComponentClass());
 			
@@ -85,13 +85,16 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeConstructor(writer, component);
 		writeComponentFamily(writer, component);
 		writeAttributes(writer, component);
-		writeSaveState(writer, component);
-		writeRestoreState(writer, component);
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
 		writeResourceHolderGetter(writer);
 		if(component.isAjaxComponent()) {
 			writeEncodePartially(writer);
+		}
+		
+		if(!isJSF2()) {
+			writeSaveState(writer, component);
+			writeRestoreState(writer, component);
 		}
 		writer.write("}");
 	}
@@ -118,9 +121,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		if(component.isAjaxComponent())
 			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
 		
-		if(hasMethodBinding(component))
-		writer.write("import javax.faces.el.MethodBinding;\n");
-		
 		String templateImports = getTemplateImports(component);
 		
 		if (StringUtils.isNotEmpty(templateImports)) {
@@ -140,14 +140,53 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writeAttributesDeclarations(BufferedWriter writer, Component component) throws IOException {
-		for (Iterator attributeIterator = component.getAttributes().iterator(); attributeIterator.hasNext();) {
-			Attribute attribute = (Attribute) attributeIterator.next();
+		boolean firstWritten = false;
+		if(isJSF2()) {
+			writer.write("\tprotected enum PropertyKeys {\n");
+		}
+		
+		for(Iterator<Attribute> attributeIterator = component.getAttributes().iterator(); attributeIterator.hasNext();) {
+			Attribute attribute = attributeIterator.next();
 			if(attribute.isIgnored())
 				continue;
 			
-			writer.write("\tprivate " + attribute.getType() + " _" + attribute.getName() + ";\n");
+			if(isJSF2()) {
+				writer.write("\n");
+				
+				if(!firstWritten) {
+					writer.write("\t\t");
+					firstWritten = true;
+				}
+				else
+					writer.write("\t\t,");
+					
+				if(attribute.getName().equals("for"))
+					writer.write("forValue(\"for\")");
+				else
+					writer.write(attribute.getName());
+
+			} else {
+				writer.write("\tprivate " + attribute.getType() + " _" + attribute.getName() + ";\n");
+			}
 		}
-		writer.write("\n");
+		
+		if(isJSF2()) {
+			writer.write(";\n");
+			
+			writer.write("\n\t\tString toString;\n\n");
+			 
+			writer.write("\t\tPropertyKeys(String toString) {\n");
+			writer.write("\t\t\tthis.toString = toString;\n");
+			writer.write("\t\t}\n\n");
+			
+			writer.write("\t\tPropertyKeys() {}\n\n");
+			
+			writer.write("\t\tpublic String toString() {\n");
+			writer.write("\t\t\treturn ((this.toString != null) ? this.toString : super.toString());");
+			writer.write("\n}\n");
+
+			writer.write("\t}\n\n");
+		}
 	}
 	
 	private void writeClassDeclaration(BufferedWriter writer, Component component) throws IOException {
@@ -195,30 +234,56 @@ public class ComponentMojo extends BaseFacesMojo{
 			if(attribute.isIgnored())
 				continue;
 			
-			if(isMethodExpression(attribute)) {
-				writeMethodExpressionAttribute(writer, attribute);
-			} else {
+			if(isJSF2()) {
+				String propertyKeyName = attribute.getName().equalsIgnoreCase("for") ? "forValue" : attribute.getName();
+				//getter
 				if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
 					writer.write("\tpublic " + FacesMojoUtils.toPrimitive(attribute.getType()) + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
 				else
 					writer.write("\tpublic " + attribute.getType() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
-					
-				writer.write("\t\tif(_" + attribute.getName() + " != null )\n");
-				writer.write("\t\t\treturn _" + attribute.getName() + ";\n"); 
-				writer.write("\n");
 				
-				writer.write("\t\tValueExpression ve = getValueExpression(\"" + attribute.getName() + "\");\n");
-				writer.write("\t\treturn ve != null ? (" + attribute.getType() + ") ve.getValue(getFacesContext().getELContext())  : " + attribute.getDefaultValue() + ";\n");
+				if(attribute.getDefaultValue() == null)
+					writer.write("\t\treturn (" + attribute.getType() + ") getStateHelper().eval(PropertyKeys." + propertyKeyName + ");\n");
+				else
+					writer.write("\t\treturn (" + attribute.getType() + ") getStateHelper().eval(PropertyKeys." + propertyKeyName + ", " + attribute.getDefaultValue() + ");\n");
+				
 				writer.write("\t}\n");
 				
+				//setter
 				if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
 					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.toPrimitive(attribute.getType()) + " _" + attribute.getName() + ") {\n");
 				else
 					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " _" + attribute.getName() + ") {\n");
 				
-				writer.write("\t\tthis._" + attribute.getName() + " = _" + attribute.getName() + ";\n");
+				writer.write("\t\tgetStateHelper().put(PropertyKeys." + propertyKeyName + ", _" + attribute.getName() + ");\n");
 				
 				writer.write("\t}\n\n");
+			} else {
+				if(isMethodExpression(attribute)) {
+					writeMethodExpressionAttribute(writer, attribute);
+				} else {
+					if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
+						writer.write("\tpublic " + FacesMojoUtils.toPrimitive(attribute.getType()) + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
+					else
+						writer.write("\tpublic " + attribute.getType() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
+						
+					writer.write("\t\tif(_" + attribute.getName() + " != null )\n");
+					writer.write("\t\t\treturn _" + attribute.getName() + ";\n"); 
+					writer.write("\n");
+					
+					writer.write("\t\tValueExpression ve = getValueExpression(\"" + attribute.getName() + "\");\n");
+					writer.write("\t\treturn ve != null ? (" + attribute.getType() + ") ve.getValue(getFacesContext().getELContext())  : " + attribute.getDefaultValue() + ";\n");
+					writer.write("\t}\n");
+					
+					if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
+						writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.toPrimitive(attribute.getType()) + " _" + attribute.getName() + ") {\n");
+					else
+						writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " _" + attribute.getName() + ") {\n");
+					
+					writer.write("\t\tthis._" + attribute.getName() + " = _" + attribute.getName() + ";\n");
+					
+					writer.write("\t}\n\n");
+				}
 			}
 		}
 	}
@@ -348,16 +413,5 @@ public class ComponentMojo extends BaseFacesMojo{
 		}
 		
 		return new File(templatePath + File.separator + templateFileName);
-	}
-	
-	protected boolean hasMethodBinding(Component component) {
-		for (Iterator iterator = component.getAttributes().iterator(); iterator.hasNext();) {
-			Attribute attribute = (Attribute) iterator.next();
-			if(attribute.getType().equals("javax.faces.el.MethodBinding"))
-				return true;
-		}
-		
-		return false;
-		
 	}
 }
