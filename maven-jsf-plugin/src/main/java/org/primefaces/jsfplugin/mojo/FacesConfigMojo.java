@@ -79,11 +79,13 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	}
 
 	private void writeFacesConfigBegin(BufferedWriter writer, List components) throws IOException {
-		writer.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		writer.write("<faces-config version=\"1.2\" xmlns=\"http://java.sun.com/xml/ns/javaee\"\n");
-        writer.write("\txmlns:xi=\"http://www.w3.org/2001/XInclude\"\n");
+		String version = isJSF2() ? "2.0" : "1.2";
+		String xsdVersion = isJSF2() ? "2_0" : "1_2";
+		
+		writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+		writer.write("<faces-config version=\"" + version + "\" xmlns=\"http://java.sun.com/xml/ns/javaee\"\n");
         writer.write("\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        writer.write("\txsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd\">\n");
+        writer.write("\txsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_" + xsdVersion + ".xsd\">\n");
 	}
 	
 	private void writeStandardConfig(BufferedWriter writer) throws IOException{
