@@ -121,6 +121,11 @@ public class ComponentMojo extends BaseFacesMojo{
 		if(component.isAjaxComponent())
 			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
 		
+		if(isJSF2()) {
+			writer.write("import javax.faces.application.ResourceDependencies;\n");
+			writer.write("import javax.faces.application.ResourceDependency;\n");
+		}
+		
 		String templateImports = getTemplateImports(component);
 		
 		if (StringUtils.isNotEmpty(templateImports)) {
@@ -190,7 +195,17 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writeClassDeclaration(BufferedWriter writer, Component component) throws IOException {
-		writer.write("public class " + component.getComponentShortName() + " extends " + component.getParentShortName());
+		writer.write("\n@ResourceDependencies({");
+		for(Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
+			Resource resource = (Resource) iterator.next();
+			writer.write("\n@ResourceDependency(name=\"" + resource.getName() + "\", library=\"prime\")");
+			
+			if(iterator.hasNext())
+				writer.write(",");
+		}
+		writer.write("})");
+		
+		writer.write("\npublic class " + component.getComponentShortName() + " extends " + component.getParentShortName());
 		if(component.isAjaxComponent())
 			writer.write(" implements AjaxComponent");
 		
@@ -206,16 +221,18 @@ public class ComponentMojo extends BaseFacesMojo{
 		else
 			writer.write("\t\tsetRendererType(null);\n");
 		
-		writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
-		writer.write("\t\tif(resourceHolder != null) {\n");
-		
-		for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
-			Resource resource = (Resource) iterator.next();
+		if(!isJSF2()) {
+			writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
+			writer.write("\t\tif(resourceHolder != null) {\n");
 			
-			writer.write("\t\t\tresourceHolder.addResource(\"" + resource.getName() + "\");\n");
+			for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
+				Resource resource = (Resource) iterator.next();
+				
+				writer.write("\t\t\tresourceHolder.addResource(\"" + resource.getName() + "\");\n");
+			}
+			
+			writer.write("\t\t}\n");
 		}
-		
-		writer.write("\t\t}\n");
 		
 		writer.write("\t}");
 		writer.write("\n\n");
