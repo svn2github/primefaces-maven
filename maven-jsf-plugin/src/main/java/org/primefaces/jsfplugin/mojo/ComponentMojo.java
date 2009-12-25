@@ -196,10 +196,10 @@ public class ComponentMojo extends BaseFacesMojo{
 	
 	private void writeClassDeclaration(BufferedWriter writer, Component component) throws IOException {
 		if(isJSF2()) {
-			writer.write("\n@ResourceDependencies({");
-			for(Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
-				Resource resource = (Resource) iterator.next();
-				writer.write("\n@ResourceDependency(name=\"" + resource.getName() + "\", library=\"prime\")");
+			writer.write("@ResourceDependencies({");
+			for(Iterator<Resource> iterator = component.getResources().iterator(); iterator.hasNext();) {
+				Resource resource = iterator.next();
+				writer.write("\n@ResourceDependency(name=\"" + resource.getName() + "\", library=\"primefaces\")");
 				
 				if(iterator.hasNext())
 					writer.write(",");
