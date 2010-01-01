@@ -356,7 +356,7 @@ public class ComponentMojo extends BaseFacesMojo{
 				continue;
 			
 			if(!isMethodBinding(attribute))
-				writer.write("\t\t_" + attribute.getName() + " = (" + FacesMojoUtils.toPrimitive(attribute.getShortTypeName()) + ") values[" + attributeNo + "];\n");
+				writer.write("\t\t_" + attribute.getName() + " = (" + attribute.getType() + ") values[" + attributeNo + "];\n");
 			else
 				writer.write("\t\t_" + attribute.getName() + " = (MethodBinding) restoreAttachedState(context, values[" + attributeNo + "]);\n");
 				
