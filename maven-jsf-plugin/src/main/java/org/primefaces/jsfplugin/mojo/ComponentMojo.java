@@ -198,8 +198,11 @@ public class ComponentMojo extends BaseFacesMojo{
 		if(isJSF2()) {
 			writer.write("@ResourceDependencies({");
 			for(Iterator<Resource> iterator = component.getResources().iterator(); iterator.hasNext();) {
-				Resource resource = iterator.next();
-				writer.write("\n@ResourceDependency(name=\"" + resource.getName() + "\", library=\"primefaces\")");
+				String resourceName = iterator.next().getName();
+				String library = resourceName.split("/")[1];
+				String libraryResource = resourceName.substring((resourceName.indexOf(library) + library.length()), resourceName.length());
+				
+				writer.write("\n@ResourceDependency(name=\"" + libraryResource + "\", library=\"" + library + "\")");
 				
 				if(iterator.hasNext())
 					writer.write(",");
