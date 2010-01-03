@@ -195,7 +195,7 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writeClassDeclaration(BufferedWriter writer, Component component) throws IOException {
-		if(isJSF2()) {
+		/*if(isJSF2()) {
 			writer.write("@ResourceDependencies({");
 			for(Iterator<Resource> iterator = component.getResources().iterator(); iterator.hasNext();) {
 				String resourceName = iterator.next().getName();
@@ -208,7 +208,7 @@ public class ComponentMojo extends BaseFacesMojo{
 					writer.write(",");
 			}
 			writer.write("})");
-		}
+		}*/
 		
 		writer.write("\npublic class " + component.getComponentShortName() + " extends " + component.getParentShortName());
 		if(component.isAjaxComponent())
@@ -226,7 +226,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		else
 			writer.write("\t\tsetRendererType(null);\n");
 		
-		if(!isJSF2()) {
+		//if(!isJSF2()) {
 			writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
 			writer.write("\t\tif(resourceHolder != null) {\n");
 			
@@ -237,7 +237,7 @@ public class ComponentMojo extends BaseFacesMojo{
 			}
 			
 			writer.write("\t\t}\n");
-		}
+		//}
 		
 		writer.write("\t}");
 		writer.write("\n\n");
