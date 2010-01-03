@@ -87,8 +87,8 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeAttributes(writer, component);
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
-		writeResourceHolderGetter(writer);
 		writeDuplicateResourceValidator(writer);
+		
 		if(component.isAjaxComponent()) {
 			writeEncodePartially(writer);
 		}
@@ -96,6 +96,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		if(!isJSF2()) {
 			writeSaveState(writer, component);
 			writeRestoreState(writer, component);
+			writeResourceHolderGetter(writer);
 		}
 		writer.write("}");
 	}
@@ -129,7 +130,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.el.MethodExpression;\n");
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
-		writer.write("import org.primefaces.resource.ResourceHolder;\n");
 		writer.write("import org.primefaces.renderkit.PartialRenderer;\n");
 		writer.write("import org.primefaces.component.resource.Resource;\n");
 		writer.write("import javax.faces.component.UIComponent;\n");
@@ -137,9 +137,8 @@ public class ComponentMojo extends BaseFacesMojo{
 		if(component.isAjaxComponent())
 			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
 		
-		if(isJSF2()) {
-			writer.write("import javax.faces.application.ResourceDependencies;\n");
-			writer.write("import javax.faces.application.ResourceDependency;\n");
+		if(!isJSF2()) {
+			writer.write("import org.primefaces.resource.ResourceHolder;\n");
 		}
 		
 		String templateImports = getTemplateImports(component);
