@@ -88,6 +88,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
 		writeResourceHolderGetter(writer);
+		writeDuplicateResourceValidator(writer);
 		if(component.isAjaxComponent()) {
 			writeEncodePartially(writer);
 		}
@@ -99,6 +100,19 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("}");
 	}
 	
+	private void writeDuplicateResourceValidator(BufferedWriter writer) throws IOException {
+		writer.write("\n\tpublic boolean resourceExists(FacesContext facesContext, String name) {\n");
+		writer.write("\t\tjava.util.List<UIComponent> resources = facesContext.getViewRoot().getComponentResources(facesContext, \"head\");\n");
+		writer.write("\t\tfor(UIComponent component : resources) {\n");
+		writer.write("\t\t\tString value = component.toString();\n");
+		writer.write("\t\t\tif(value != null && value.equals(name))\n");
+		writer.write("\t\t\t\treturn true;\n");
+		writer.write("\t\t}\n");
+		writer.write("\t\treturn false;\n");
+		writer.write("\t}\n");
+		
+	}
+
 	private void writeEncodePartially(BufferedWriter writer) throws IOException{
 		writer.write("\n\tpublic void encodePartially(FacesContext facesContext) throws IOException {\n");
 		writer.write("\t\tRenderer renderer = getRenderer(facesContext);\n");
@@ -117,6 +131,8 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import java.io.IOException;\n");
 		writer.write("import org.primefaces.resource.ResourceHolder;\n");
 		writer.write("import org.primefaces.renderkit.PartialRenderer;\n");
+		writer.write("import org.primefaces.component.resource.Resource;\n");
+		writer.write("import javax.faces.component.UIComponent;\n");
 		
 		if(component.isAjaxComponent())
 			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
@@ -195,21 +211,6 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writeClassDeclaration(BufferedWriter writer, Component component) throws IOException {
-		/*if(isJSF2()) {
-			writer.write("@ResourceDependencies({");
-			for(Iterator<Resource> iterator = component.getResources().iterator(); iterator.hasNext();) {
-				String resourceName = iterator.next().getName();
-				String library = resourceName.split("/")[1];
-				String libraryResource = resourceName.substring((resourceName.indexOf(library) + library.length()), resourceName.length());
-				
-				writer.write("\n@ResourceDependency(name=\"" + libraryResource + "\", library=\"" + library + "\")");
-				
-				if(iterator.hasNext())
-					writer.write(",");
-			}
-			writer.write("})");
-		}*/
-		
 		writer.write("\npublic class " + component.getComponentShortName() + " extends " + component.getParentShortName());
 		if(component.isAjaxComponent())
 			writer.write(" implements AjaxComponent");
@@ -226,7 +227,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		else
 			writer.write("\t\tsetRendererType(null);\n");
 		
-		//if(!isJSF2()) {
+		if(!isJSF2()) {
 			writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
 			writer.write("\t\tif(resourceHolder != null) {\n");
 			
@@ -237,7 +238,21 @@ public class ComponentMojo extends BaseFacesMojo{
 			}
 			
 			writer.write("\t\t}\n");
-		//}
+		} else {
+			writer.write("\t\tFacesContext facesContext = getFacesContext();\n");
+			writer.write("\t\tjavax.faces.component.UIViewRoot viewroot = facesContext.getViewRoot();\n");
+			writer.write("\t\tResource resource = null;\n");
+			
+			for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
+				Resource resource = (Resource) iterator.next();
+				
+				writer.write("\t\tif(!resourceExists(facesContext, \"" + resource.getName() + "\")) {\n");
+				writer.write("\t\t\tresource = (Resource) facesContext.getApplication().createComponent(\"org.primefaces.component.Resource\");\n");
+				writer.write("\t\t\tresource.setName(\"" + resource.getName() + "\");\n");
+				writer.write("\t\t\tviewroot.addComponentResource(facesContext, resource, \"head\");\n");
+				writer.write("\t\t}\n");
+			}
+		}
 		
 		writer.write("\t}");
 		writer.write("\n\n");
