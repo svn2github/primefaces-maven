@@ -87,13 +87,14 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeAttributes(writer, component);
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
-		writeDuplicateResourceValidator(writer);
 		
 		if(component.isAjaxComponent()) {
 			writeEncodePartially(writer);
 		}
 		
-		if(!isJSF2()) {
+		if(isJSF2()) {
+			writeDuplicateResourceValidator(writer);
+		} else {
 			writeSaveState(writer, component);
 			writeRestoreState(writer, component);
 			writeResourceHolderGetter(writer);
@@ -111,7 +112,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("\t\t}\n");
 		writer.write("\t\treturn false;\n");
 		writer.write("\t}\n");
-		
 	}
 
 	private void writeEncodePartially(BufferedWriter writer) throws IOException{
@@ -131,13 +131,14 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
 		writer.write("import org.primefaces.renderkit.PartialRenderer;\n");
-		writer.write("import org.primefaces.component.resource.Resource;\n");
-		writer.write("import javax.faces.component.UIComponent;\n");
 		
 		if(component.isAjaxComponent())
 			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
 		
-		if(!isJSF2()) {
+		if(isJSF2()) {
+			writer.write("import org.primefaces.component.resource.Resource;\n");
+			writer.write("import javax.faces.component.UIComponent;\n");
+		} else {
 			writer.write("import org.primefaces.resource.ResourceHolder;\n");
 		}
 		
@@ -226,18 +227,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		else
 			writer.write("\t\tsetRendererType(null);\n");
 		
-		if(!isJSF2()) {
-			writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
-			writer.write("\t\tif(resourceHolder != null) {\n");
-			
-			for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
-				Resource resource = (Resource) iterator.next();
-				
-				writer.write("\t\t\tresourceHolder.addResource(\"" + resource.getName() + "\");\n");
-			}
-			
-			writer.write("\t\t}\n");
-		} else {
+		if(isJSF2()) {
 			writer.write("\t\tFacesContext facesContext = getFacesContext();\n");
 			writer.write("\t\tjavax.faces.component.UIViewRoot viewroot = facesContext.getViewRoot();\n");
 			writer.write("\t\tResource resource = null;\n");
@@ -251,6 +241,17 @@ public class ComponentMojo extends BaseFacesMojo{
 				writer.write("\t\t\tviewroot.addComponentResource(facesContext, resource, \"head\");\n");
 				writer.write("\t\t}\n");
 			}
+		} else {
+			writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
+			writer.write("\t\tif(resourceHolder != null) {\n");
+			
+			for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
+				Resource resource = (Resource) iterator.next();
+				
+				writer.write("\t\t\tresourceHolder.addResource(\"" + resource.getName() + "\");\n");
+			}
+			
+			writer.write("\t\t}\n");
 		}
 		
 		writer.write("\t}");
