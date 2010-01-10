@@ -94,6 +94,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		
 		if(isJSF2()) {
 			writeDuplicateResourceValidator(writer);
+			writePostAddToView(writer, component);
 		} else {
 			writeSaveState(writer, component);
 			writeRestoreState(writer, component);
@@ -102,6 +103,25 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("}");
 	}
 	
+	private void writePostAddToView(BufferedWriter writer, Component component) throws IOException {
+		writer.write("\n\t@Override\n");
+		writer.write("\tpublic void processEvent(ComponentSystemEvent event) throws AbortProcessingException {\n");
+		writer.write("\t\tFacesContext facesContext = getFacesContext();\n");
+		writer.write("\t\tjavax.faces.component.UIViewRoot viewroot = facesContext.getViewRoot();\n");
+		writer.write("\t\tResource resource = null;\n");
+		
+		for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
+			Resource resource = (Resource) iterator.next();
+			
+			writer.write("\t\tif(!resourceExists(facesContext, \"" + resource.getName() + "\")) {\n");
+			writer.write("\t\t\tresource = (Resource) facesContext.getApplication().createComponent(\"org.primefaces.component.Resource\");\n");
+			writer.write("\t\t\tresource.setName(\"" + resource.getName() + "\");\n");
+			writer.write("\t\t\tviewroot.addComponentResource(facesContext, resource, \"head\");\n");
+			writer.write("\t\t}\n");
+		}
+		writer.write("\t}\n\n");
+	}
+
 	private void writeDuplicateResourceValidator(BufferedWriter writer) throws IOException {
 		writer.write("\n\tpublic boolean resourceExists(FacesContext facesContext, String name) {\n");
 		writer.write("\t\tjava.util.List<UIComponent> resources = facesContext.getViewRoot().getComponentResources(facesContext, \"head\");\n");
@@ -131,13 +151,18 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
 		writer.write("import org.primefaces.renderkit.PartialRenderer;\n");
-		
+
 		if(component.isAjaxComponent())
 			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
 		
 		if(isJSF2()) {
 			writer.write("import org.primefaces.component.resource.Resource;\n");
 			writer.write("import javax.faces.component.UIComponent;\n");
+			writer.write("import javax.faces.event.ListenerFor;\n");
+			writer.write("import javax.faces.event.PostAddToViewEvent;\n");
+			writer.write("import javax.faces.event.ComponentSystemEvent;\n");
+			writer.write("import javax.faces.event.AbortProcessingException;\n");
+			
 		} else {
 			writer.write("import org.primefaces.resource.ResourceHolder;\n");
 		}
@@ -211,6 +236,9 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 	
 	private void writeClassDeclaration(BufferedWriter writer, Component component) throws IOException {
+		if(isJSF2()) {
+			writer.write("@ListenerFor(systemEventClass = PostAddToViewEvent.class)");
+		}
 		writer.write("\npublic class " + component.getComponentShortName() + " extends " + component.getParentShortName());
 		if(component.isAjaxComponent())
 			writer.write(" implements AjaxComponent");
@@ -227,21 +255,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		else
 			writer.write("\t\tsetRendererType(null);\n");
 		
-		if(isJSF2()) {
-			writer.write("\t\tFacesContext facesContext = getFacesContext();\n");
-			writer.write("\t\tjavax.faces.component.UIViewRoot viewroot = facesContext.getViewRoot();\n");
-			writer.write("\t\tResource resource = null;\n");
-			
-			for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
-				Resource resource = (Resource) iterator.next();
-				
-				writer.write("\t\tif(!resourceExists(facesContext, \"" + resource.getName() + "\")) {\n");
-				writer.write("\t\t\tresource = (Resource) facesContext.getApplication().createComponent(\"org.primefaces.component.Resource\");\n");
-				writer.write("\t\t\tresource.setName(\"" + resource.getName() + "\");\n");
-				writer.write("\t\t\tviewroot.addComponentResource(facesContext, resource, \"head\");\n");
-				writer.write("\t\t}\n");
-			}
-		} else {
+		if(!isJSF2()) {
 			writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
 			writer.write("\t\tif(resourceHolder != null) {\n");
 			
