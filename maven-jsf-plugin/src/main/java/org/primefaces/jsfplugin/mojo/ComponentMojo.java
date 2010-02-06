@@ -94,7 +94,9 @@ public class ComponentMojo extends BaseFacesMojo{
 		
 		if(isJSF2()) {
 			writeDuplicateResourceValidator(writer);
-			writePostAddToView(writer, component);
+			if(!component.getResources().isEmpty()) {
+				writePostAddToView(writer, component);
+			}
 		} else {
 			writeSaveState(writer, component);
 			writeRestoreState(writer, component);
