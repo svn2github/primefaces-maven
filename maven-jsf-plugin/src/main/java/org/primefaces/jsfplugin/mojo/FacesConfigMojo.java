@@ -135,6 +135,15 @@ public class FacesConfigMojo extends BaseFacesMojo{
 			writer.write("\t\t</renderer>\n");
 		}
 		
+		//Custom HeadRenderer for JSF2
+		if(isJSF2()) {
+			writer.write("\t\t<renderer>\n");
+			writer.write("\t\t\t<component-family>javax.faces.Output</component-family>\n");
+			writer.write("\t\t\t<renderer-type>javax.faces.Head</renderer-type>\n");
+			writer.write("\t\t\t<renderer-class>org.primefaces.renderkit.HeadRenderer</renderer-class>\n");
+			writer.write("\t\t</renderer>\n");
+		}
+		
 		writer.write("\t</render-kit>\n\n");
 	}
 	

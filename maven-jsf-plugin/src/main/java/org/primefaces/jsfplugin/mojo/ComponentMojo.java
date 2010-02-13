@@ -97,6 +97,7 @@ public class ComponentMojo extends BaseFacesMojo{
 			if(!component.getResources().isEmpty()) {
 				writePostAddToView(writer, component);
 			}
+			writerAttributeHandler(writer);
 		} else {
 			writeSaveState(writer, component);
 			writeRestoreState(writer, component);
@@ -105,6 +106,32 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("}");
 	}
 	
+	private void writerAttributeHandler(BufferedWriter writer) throws IOException {
+		writer.write("\n\tpublic void handleAttribute(String name, Object value) {\n");
+		writer.write("\t\tList<String> setAttributes = (List<String>) this.getAttributes().get(\"javax.faces.component.UIComponentBase.attributesThatAreSet\");\n");
+		writer.write("\t\tif(setAttributes == null) {\n");
+		writer.write("\t\t\tString cname = this.getClass().getName();\n");
+		writer.write("\t\t\tif(cname != null && cname.startsWith(OPTIMIZED_PACKAGE)) {\n");
+		writer.write("\t\t\t\tsetAttributes = new ArrayList<String>(6);\n");
+		writer.write("\t\t\t\tthis.getAttributes().put(\"javax.faces.component.UIComponentBase.attributesThatAreSet\", setAttributes);\n");
+		writer.write("\t\t\t}\n");
+		writer.write("\t\t}\n");
+		
+		writer.write("\t\tif(setAttributes != null) {\n");
+		writer.write("\t\t\tif(value == null) {\n");
+		writer.write("\t\t\t\tValueExpression ve = getValueExpression(name);\n");
+		writer.write("\t\t\t\tif(ve == null) {\n");
+		writer.write("\t\t\t\t\tsetAttributes.remove(name);\n");
+		writer.write("\t\t\t\t}");
+		writer.write(" else if(!setAttributes.contains(name)) {\n");
+		writer.write("\t\t\t\t\tsetAttributes.add(name);\n");
+		writer.write("\t\t\t\t}\n");
+		writer.write("\t\t\t}\n");
+		writer.write("\t\t}\n");
+		
+		writer.write("\t}\n");
+	}
+
 	private void writePostAddToView(BufferedWriter writer, Component component) throws IOException {
 		writer.write("\n\t@Override\n");
 		writer.write("\tpublic void processEvent(ComponentSystemEvent event) throws AbortProcessingException {\n");
@@ -164,7 +191,8 @@ public class ComponentMojo extends BaseFacesMojo{
 			writer.write("import javax.faces.event.PostAddToViewEvent;\n");
 			writer.write("import javax.faces.event.ComponentSystemEvent;\n");
 			writer.write("import javax.faces.event.AbortProcessingException;\n");
-			
+			writer.write("import java.util.List;\n");
+			writer.write("import java.util.ArrayList;\n");
 		} else {
 			writer.write("import org.primefaces.resource.ResourceHolder;\n");
 		}
@@ -183,6 +211,10 @@ public class ComponentMojo extends BaseFacesMojo{
 		
 		if(component.getRendererType() != null)
 			writer.write("\tprivate static final String DEFAULT_RENDERER = \"" + component.getRendererType() + "\";\n");
+		
+		if(isJSF2()) {
+			writer.write("\tprivate static final String OPTIMIZED_PACKAGE = \"org.primefaces.component.\";\n");
+		}
 		
 		writer.write("\n");
 	}
@@ -309,6 +341,7 @@ public class ComponentMojo extends BaseFacesMojo{
 					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " _" + attribute.getName() + ") {\n");
 				
 				writer.write("\t\tgetStateHelper().put(PropertyKeys." + propertyKeyName + ", _" + attribute.getName() + ");\n");
+				writer.write("\t\thandleAttribute(\"" + propertyKeyName + "\", _" + attribute.getName() + ");\n");
 				
 				writer.write("\t}\n\n");
 			} else {
