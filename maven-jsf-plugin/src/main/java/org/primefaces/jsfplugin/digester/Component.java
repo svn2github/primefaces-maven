@@ -33,7 +33,8 @@ public class Component {
 	private Vector attributes;
 	private Vector resources;
 	private boolean ajaxComponent;
-	
+	private boolean ajaxSource;
+
 	public Component() {
 		attributes = new Vector();
 		resources = new Vector();
@@ -130,7 +131,13 @@ public class Component {
 	public void setAjaxComponent(boolean ajaxComponent) {
 		this.ajaxComponent = ajaxComponent;
 	}
-
+	
+	public boolean isAjaxSource() {
+		return ajaxSource;
+	}
+	public void setAjaxSource(boolean ajaxSource) {
+		this.ajaxSource = ajaxSource;
+	}
 	
 	/**
 	 * Gives the short name of the component

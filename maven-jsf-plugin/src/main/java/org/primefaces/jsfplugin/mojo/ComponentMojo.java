@@ -184,6 +184,9 @@ public class ComponentMojo extends BaseFacesMojo{
 		if(component.isAjaxComponent())
 			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
 		
+		if(component.isAjaxSource())
+			writer.write("import org.primefaces.component.api.AjaxSource;\n");
+		
 		if(isJSF2()) {
 			writer.write("import org.primefaces.component.resource.Resource;\n");
 			writer.write("import javax.faces.component.UIComponent;\n");
@@ -274,8 +277,15 @@ public class ComponentMojo extends BaseFacesMojo{
 			writer.write("@ListenerFor(systemEventClass = PostAddToViewEvent.class)");
 		}
 		writer.write("\npublic class " + component.getComponentShortName() + " extends " + component.getParentShortName());
-		if(component.isAjaxComponent())
+		
+		if(component.isAjaxComponent()) {
 			writer.write(" implements AjaxComponent");
+		}
+		
+		if(component.isAjaxSource()) {
+			writer.write(" implements AjaxSource");
+		}
+			
 		
 		writer.write(" {\n");
 		writer.write("\n\n");

@@ -84,6 +84,7 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		digester.addBeanPropertySetter("component/rendererClass", "rendererClass");
 		digester.addBeanPropertySetter("component/parent", "parent");
 		digester.addBeanPropertySetter("component/ajaxComponent", "ajaxComponent");
+		digester.addBeanPropertySetter("component/ajaxSource", "ajaxSource");
 		
 		digester.addObjectCreate("component/attributes/attribute", Attribute.class);
 		digester.addBeanPropertySetter("component/attributes/attribute/name","name");
