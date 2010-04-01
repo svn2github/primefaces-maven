@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-catalog>
+  <archetypes>
+    <archetype>
+      <groupId>org.primefaces.archetypes</groupId>
+      <artifactId>primefaces-jsf20-archetype</artifactId>
+      <version>0.1.0</version>
+      <description>PrimeFaces archetype for creating an skeleton project that uses JSF 2.0</description>
+    </archetype>
+  </archetypes>
+</archetype-catalog>
