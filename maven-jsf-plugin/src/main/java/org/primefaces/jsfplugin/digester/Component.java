@@ -15,6 +15,7 @@
  */
 package org.primefaces.jsfplugin.digester;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,12 +33,12 @@ public class Component {
 	private String rendererClass;
 	private Vector attributes;
 	private Vector resources;
-	private boolean ajaxComponent;
-	private boolean ajaxSource;
+	private Vector interfaces;
 
 	public Component() {
 		attributes = new Vector();
 		resources = new Vector();
+		interfaces = new Vector();
 	}
 	
 	public void addAttribute(Attribute attribute) {
@@ -46,6 +47,10 @@ public class Component {
 	
 	public void addResource(Resource resource) {
 		resources.add(resource);
+	}
+	
+	public void addInterface(Interface _interface) {
+		interfaces.add(_interface);
 	}
 	
 	public String getTag() {
@@ -126,17 +131,14 @@ public class Component {
 	}
 	
 	public boolean isAjaxComponent() {
-		return ajaxComponent;
-	}
-	public void setAjaxComponent(boolean ajaxComponent) {
-		this.ajaxComponent = ajaxComponent;
-	}
-	
-	public boolean isAjaxSource() {
-		return ajaxSource;
-	}
-	public void setAjaxSource(boolean ajaxSource) {
-		this.ajaxSource = ajaxSource;
+		for(Iterator iterator = getInterfaces().iterator(); iterator.hasNext();) {
+			Interface _interface = (Interface) iterator.next();
+			
+			if(_interface.getName().equals("org.primefaces.component.api.AjaxComponent"))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -172,5 +174,13 @@ public class Component {
 	 */
 	public String getPackage() {
 		return StringUtils.substringBeforeLast(getTagClass(), ".");
+	}
+	
+	public Vector getInterfaces() {
+		return interfaces;
+	}
+
+	public void setInterfaces(Vector interfaces) {
+		this.interfaces = interfaces;
 	}
 }

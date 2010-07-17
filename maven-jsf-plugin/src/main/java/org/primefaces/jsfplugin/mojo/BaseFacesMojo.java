@@ -27,6 +27,7 @@ import org.apache.maven.project.MavenProject;
 
 import org.primefaces.jsfplugin.digester.Attribute;
 import org.primefaces.jsfplugin.digester.Component;
+import org.primefaces.jsfplugin.digester.Interface;
 import org.primefaces.jsfplugin.digester.Resource;
 
 /**
@@ -83,8 +84,6 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		digester.addBeanPropertySetter("component/rendererType", "rendererType");
 		digester.addBeanPropertySetter("component/rendererClass", "rendererClass");
 		digester.addBeanPropertySetter("component/parent", "parent");
-		digester.addBeanPropertySetter("component/ajaxComponent", "ajaxComponent");
-		digester.addBeanPropertySetter("component/ajaxSource", "ajaxSource");
 		
 		digester.addObjectCreate("component/attributes/attribute", Attribute.class);
 		digester.addBeanPropertySetter("component/attributes/attribute/name","name");
@@ -99,8 +98,11 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		
 		digester.addObjectCreate("component/resources/resource", Resource.class);
 		digester.addBeanPropertySetter("component/resources/resource/name","name");
-		
 		digester.addSetNext("component/resources/resource", "addResource");
+		
+		digester.addObjectCreate("component/interfaces/interface", Interface.class);
+		digester.addBeanPropertySetter("component/interfaces/interface/name","name");
+		digester.addSetNext("component/interfaces/interface", "addInterface");
 		
 		return digester;
 	}

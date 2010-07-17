@@ -31,6 +31,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 import org.primefaces.jsfplugin.digester.Attribute;
 import org.primefaces.jsfplugin.digester.Component;
+import org.primefaces.jsfplugin.digester.Interface;
 import org.primefaces.jsfplugin.digester.Resource;
 import org.primefaces.jsfplugin.util.FacesMojoUtils;
 
@@ -180,12 +181,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
 		writer.write("import org.primefaces.renderkit.PartialRenderer;\n");
-
-		if(component.isAjaxComponent())
-			writer.write("import org.primefaces.component.api.AjaxComponent;\n");
-		
-		if(component.isAjaxSource())
-			writer.write("import org.primefaces.component.api.AjaxSource;\n");
 		
 		if(isJSF2()) {
 			writer.write("import org.primefaces.component.resource.Resource;\n");
@@ -278,14 +273,17 @@ public class ComponentMojo extends BaseFacesMojo{
 		}
 		writer.write("\npublic class " + component.getComponentShortName() + " extends " + component.getParentShortName());
 		
-		if(component.isAjaxComponent()) {
-			writer.write(" implements AjaxComponent");
-		}
-		
-		if(component.isAjaxSource()) {
-			writer.write(" implements AjaxSource");
-		}
+		if(!component.getInterfaces().isEmpty()) {
+			writer.write(" implements ");
 			
+			for(Iterator<Interface> iterator = component.getInterfaces().iterator(); iterator.hasNext();) {
+				Interface _interface = iterator.next();
+				writer.write(_interface.getName());
+				
+				if(iterator.hasNext())
+					writer.write(",");
+			}
+		}
 		
 		writer.write(" {\n");
 		writer.write("\n\n");
