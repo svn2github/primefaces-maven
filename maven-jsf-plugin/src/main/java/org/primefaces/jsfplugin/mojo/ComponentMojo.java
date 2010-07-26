@@ -46,10 +46,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		try {
 			writeComponents(getComponents());
 			getLog().info("Components Generated successfully");
-			
-			String sourceDirectory =  project.getBuild().getDirectory() +File.separator + "maven-jsf-plugin"
-									+ File.separator + "main" + File.separator + "java"; 
-			project.addCompileSourceRoot(  sourceDirectory );
 		} catch (Exception e) {
 			getLog().info("Error occured in component generation:");
 			getLog().info(e.toString());

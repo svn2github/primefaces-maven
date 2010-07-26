@@ -133,8 +133,8 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	protected String getCreateOutputDirectory() {
 		
 		String outputPath = project.getBuild().getDirectory()
-				+ File.separator + "maven-jsf-plugin" + File.separator + "main"
-				+ File.separator + "java" + File.separator;
+				+ File.separator + "generated-sources"
+                                + File.separator + "maven-jsf-plugin" + File.separator;
 
 		File componentsDirectory = new File(outputPath);
 		
