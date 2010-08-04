@@ -85,10 +85,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
 		
-		if(component.isAjaxComponent()) {
-			writeEncodePartially(writer);
-		}
-		
 		if(isJSF2()) {
 			writerAttributeHandler(writer);
 		} else {
@@ -125,15 +121,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("\t}\n");
 	}
 
-	private void writeEncodePartially(BufferedWriter writer) throws IOException{
-		writer.write("\n\tpublic void encodePartially(FacesContext facesContext) throws IOException {\n");
-		writer.write("\t\tRenderer renderer = getRenderer(facesContext);\n");
-		writer.write("\n\t\tif(renderer instanceof PartialRenderer) {\n");
-		writer.write("\t\t\t((PartialRenderer)renderer).encodePartially(facesContext, this);\n");
-		writer.write("\t\t}\n");
-		writer.write("\t}\n");
-	}
-
 	private void writeImports(BufferedWriter writer, Component component) throws IOException {
 		writer.write("import " + component.getParent() + ";\n");
 		writer.write("import javax.faces.context.FacesContext;\n");
@@ -141,7 +128,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.el.MethodExpression;\n");
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
-		writer.write("import org.primefaces.renderkit.PartialRenderer;\n");
 		
 		if(isJSF2()) {
 			writer.write("import javax.faces.component.UIComponent;\n");
