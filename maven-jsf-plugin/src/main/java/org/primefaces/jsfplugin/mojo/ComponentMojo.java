@@ -84,6 +84,7 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeAttributes(writer, component);
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
+        writeWidgetVarResolver(writer);
 		
 		if(isJSF2()) {
 			writerAttributeHandler(writer);
@@ -124,6 +125,7 @@ public class ComponentMojo extends BaseFacesMojo{
 	private void writeImports(BufferedWriter writer, Component component) throws IOException {
 		writer.write("import " + component.getParent() + ";\n");
 		writer.write("import javax.faces.context.FacesContext;\n");
+        writer.write("import javax.faces.component.UINamingContainer;\n");
 		writer.write("import javax.el.ValueExpression;\n");
 		writer.write("import javax.el.MethodExpression;\n");
 		writer.write("import javax.faces.render.Renderer;\n");
@@ -463,4 +465,21 @@ public class ComponentMojo extends BaseFacesMojo{
 		
 		return new File(templatePath + File.separator + templateFileName);
 	}
+
+    protected void writeWidgetVarResolver(BufferedWriter writer) throws IOException {
+        writer.write("\tprivate String widgetVar = null;\n\n");
+        writer.write("\tpublic String resolveWidgetVar() {\n");
+        writer.write("\t\tif(widgetVar == null) {\n");
+        writer.write("\t\t\tFacesContext context = FacesContext.getCurrentInstance();\n");
+        writer.write("\t\t\tString userWidgetVar = (String) getAttributes().get(\"widgetVar\");\n");
+        writer.write("\t\t\tif(userWidgetVar != null) {\n");
+        writer.write("\t\t\t\twidgetVar = userWidgetVar;\n");
+        writer.write("\t\t\t}");
+        writer.write(" else {\n");
+        writer.write("\t\t\t\twidgetVar = \"widget_\" + getClientId(context).replaceAll(\"-|\" + UINamingContainer.getSeparatorChar(context), \"_\");\n");
+        writer.write("\t\t\t}\n");
+        writer.write("\t\t}\n");
+        writer.write("\t\treturn widgetVar;\n");
+        writer.write("\t}\n");
+    }
 }
