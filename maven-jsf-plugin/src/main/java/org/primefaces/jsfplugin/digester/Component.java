@@ -183,4 +183,15 @@ public class Component {
 	public void setInterfaces(Vector interfaces) {
 		this.interfaces = interfaces;
 	}
+
+    public boolean isWidget() {
+        for(Iterator<Interface> iterator = getInterfaces().iterator(); iterator.hasNext();) {
+				Interface _interface = iterator.next();
+                if(_interface.getName().equalsIgnoreCase("org.primefaces.component.api.Widget")) {
+                    return true;
+            }
+        }
+
+        return false;
+    }
 }

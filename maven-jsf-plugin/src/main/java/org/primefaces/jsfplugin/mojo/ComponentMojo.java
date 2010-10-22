@@ -84,7 +84,10 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeAttributes(writer, component);
 		writeTemplate(writer, component);
 		writeFacesContextGetter(writer);
-        writeWidgetVarResolver(writer);
+
+        if(component.isWidget()) {
+            writeWidgetVarResolver(writer);
+        }
 		
 		if(isJSF2()) {
 			writerAttributeHandler(writer);
@@ -467,8 +470,8 @@ public class ComponentMojo extends BaseFacesMojo{
 	}
 
     protected void writeWidgetVarResolver(BufferedWriter writer) throws IOException {
-        writer.write("\tprivate String widgetVar = null;\n\n");
         writer.write("\tpublic String resolveWidgetVar() {\n");
+        writer.write("\t\tString widgetVar = getWidgetVar();\n");
         writer.write("\t\tif(widgetVar == null) {\n");
         writer.write("\t\t\tFacesContext context = FacesContext.getCurrentInstance();\n");
         writer.write("\t\t\tString userWidgetVar = (String) getAttributes().get(\"widgetVar\");\n");
@@ -478,6 +481,7 @@ public class ComponentMojo extends BaseFacesMojo{
         writer.write(" else {\n");
         writer.write("\t\t\t\twidgetVar = \"widget_\" + getClientId(context).replaceAll(\"-|\" + UINamingContainer.getSeparatorChar(context), \"_\");\n");
         writer.write("\t\t\t}\n");
+        writer.write("\t\tsetWidgetVar(widgetVar);\n");
         writer.write("\t\t}\n");
         writer.write("\t\treturn widgetVar;\n");
         writer.write("\t}\n");
