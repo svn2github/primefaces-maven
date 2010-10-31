@@ -123,7 +123,6 @@ public class FaceletsMojo extends BaseFacesMojo{
                 writer.write("\t\t<attribute>\n");
 
                 writer.write("\t\t\t<description>");
-                writer.write(attribute.getDescription());
                 writer.write("</description>\n");
 
                 writer.write("\t\t\t<name>");
