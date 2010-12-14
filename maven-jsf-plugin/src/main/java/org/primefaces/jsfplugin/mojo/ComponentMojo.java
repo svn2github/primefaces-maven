@@ -471,19 +471,13 @@ public class ComponentMojo extends BaseFacesMojo{
 
     protected void writeWidgetVarResolver(BufferedWriter writer) throws IOException {
         writer.write("\tpublic String resolveWidgetVar() {\n");
-        writer.write("\t\tString widgetVar = getWidgetVar();\n");
-        writer.write("\t\tif(widgetVar == null) {\n");
-        writer.write("\t\t\tFacesContext context = FacesContext.getCurrentInstance();\n");
-        writer.write("\t\t\tString userWidgetVar = (String) getAttributes().get(\"widgetVar\");\n");
-        writer.write("\t\t\tif(userWidgetVar != null) {\n");
-        writer.write("\t\t\t\twidgetVar = userWidgetVar;\n");
-        writer.write("\t\t\t}");
-        writer.write(" else {\n");
-        writer.write("\t\t\t\twidgetVar = \"widget_\" + getClientId(context).replaceAll(\"-|\" + UINamingContainer.getSeparatorChar(context), \"_\");\n");
-        writer.write("\t\t\t}\n");
-        writer.write("\t\tsetWidgetVar(widgetVar);\n");
-        writer.write("\t\t}\n");
-        writer.write("\t\treturn widgetVar;\n");
+        writer.write("\t\tFacesContext context = FacesContext.getCurrentInstance();\n");
+        writer.write("\t\tString userWidgetVar = (String) getAttributes().get(\"widgetVar\");\n\n");
+        writer.write("\t\tif(userWidgetVar != null)\n");
+        writer.write("\t\t\treturn userWidgetVar;\n");
+        writer.write("\t\t");
+        writer.write(" else\n");
+        writer.write("\t\t\treturn \"widget_\" + getClientId(context).replaceAll(\"-|\" + UINamingContainer.getSeparatorChar(context), \"_\");\n");
         writer.write("\t}\n");
     }
 }
