@@ -46,16 +46,23 @@ public class CSSCompressorMojo extends AbstractMojo {
         File resourcesFolders[] = new File(outputDirectory).listFiles();
 
         for(File resourceFolder : resourcesFolders) {
-            File[] resources = resourceFolder.listFiles();
-            for(File resource : resources) {
-                if(resource.getName().endsWith("css")) {
+            processFolder(resourceFolder);
+        }
+    }
 
-                    try {
-                        processCSS(resource);
-                    }catch(IOException e) {
-                        throw new MojoExecutionException("IOException in compressing CSS", e);
-                    }
+    private void processFolder(File file) throws MojoExecutionException {
+        File[] resources = file.listFiles();
+        for(File resource : resources) {
+            if(resource.getName().endsWith("css")) {
+
+                try {
+                    processCSS(resource);
+                }catch(IOException e) {
+                    throw new MojoExecutionException("IOException in compressing CSS", e);
                 }
+            }
+            else if(resource.isDirectory()) {
+                processFolder(resource);
             }
         }
     }
