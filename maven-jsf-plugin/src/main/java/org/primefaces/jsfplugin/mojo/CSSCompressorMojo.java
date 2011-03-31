@@ -38,22 +38,32 @@ public class CSSCompressorMojo extends AbstractMojo {
 	 */
 	protected MavenProject project;
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        String outputDirectory = project.getBuild().getOutputDirectory() + File.separator
-                + "META-INF" + File.separator + "resources" + File.separator + "primefaces";
-        getLog().info(outputDirectory);
-        
-        File resourcesFolders[] = new File(outputDirectory).listFiles();
+    /**
+	 * @parameter expression="${theme}"
+	 */
+	protected boolean theme;
 
-        for(File resourceFolder : resourcesFolders) {
-            processFolder(resourceFolder);
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        String outputDirectoryPath = project.getBuild().getOutputDirectory() + File.separator
+                + "META-INF" + File.separator + "resources" + File.separator + "primefaces";
+
+        if(theme) {
+            outputDirectoryPath += "-" + project.getArtifactId();
+        }
+
+        File outputDirectory = new File(outputDirectoryPath);
+        
+        if(outputDirectory.exists()) {
+            processFolder(outputDirectory);
         }
     }
 
     private void processFolder(File file) throws MojoExecutionException {
         File[] resources = file.listFiles();
+        
         for(File resource : resources) {
             if(resource.getName().endsWith("css")) {
+                getLog().info("Compressing:" + resource.getName());
 
                 try {
                     processCSS(resource);
