@@ -142,6 +142,11 @@ public class FacesConfigMojo extends BaseFacesMojo{
 			writer.write("\t\t\t<renderer-type>javax.faces.Head</renderer-type>\n");
 			writer.write("\t\t\t<renderer-class>org.primefaces.renderkit.HeadRenderer</renderer-class>\n");
 			writer.write("\t\t</renderer>\n");
+            
+            writer.write("\t\t<client-behavior-renderer>\n");
+			writer.write("\t\t\t<client-behavior-renderer-type>org.primefaces.component.AjaxBehaviorRenderer</client-behavior-renderer-type>\n");
+			writer.write("\t\t\t<client-behavior-renderer-class>org.primefaces.component.behavior.ajax.AjaxBehaviorRenderer</client-behavior-renderer-class>\n");
+			writer.write("\t\t</client-behavior-renderer>\n");
 		}
 		
 		writer.write("\t</render-kit>\n\n");
