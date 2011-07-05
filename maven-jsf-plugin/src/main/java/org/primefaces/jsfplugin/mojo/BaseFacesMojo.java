@@ -84,6 +84,7 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		digester.addBeanPropertySetter("component/rendererType", "rendererType");
 		digester.addBeanPropertySetter("component/rendererClass", "rendererClass");
 		digester.addBeanPropertySetter("component/parent", "parent");
+        digester.addBeanPropertySetter("component/description", "description");
 		
 		digester.addObjectCreate("component/attributes/attribute", Attribute.class);
 		digester.addBeanPropertySetter("component/attributes/attribute/name","name");
@@ -93,6 +94,7 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		digester.addBeanPropertySetter("component/attributes/attribute/ignoreInComponent","ignoreInComponent");
 		digester.addBeanPropertySetter("component/attributes/attribute/method-signature","methodSignature");
 		digester.addBeanPropertySetter("component/attributes/attribute/literal","literal");
+        digester.addBeanPropertySetter("component/attributes/attribute/description","description");
 		digester.addSetNext("component/attributes/attribute", "addAttribute");
 		
 		digester.addObjectCreate("component/resources/resource", Resource.class);

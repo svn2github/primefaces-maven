@@ -34,6 +34,7 @@ public class Component {
 	private Vector attributes;
 	private Vector resources;
 	private Vector interfaces;
+    private String description;
 
 	public Component() {
 		attributes = new Vector();
@@ -129,7 +130,15 @@ public class Component {
 	public void setComponentHandlerClass(String componentHandlerClass) {
 		this.componentHandlerClass = componentHandlerClass;
 	}
-	
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
 	public boolean isAjaxComponent() {
 		for(Iterator iterator = getInterfaces().iterator(); iterator.hasNext();) {
 			Interface _interface = (Interface) iterator.next();

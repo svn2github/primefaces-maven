@@ -26,6 +26,7 @@ public class Attribute {
 	private boolean ignoreInComponent = false;
 	private String methodSignature;
 	private boolean literal;
+    private String description;
 	
 	public String getName() {
 		return name;
@@ -81,7 +82,15 @@ public class Attribute {
 	public void setLiteral(boolean literal) {
 		this.literal = literal;
 	}
-	
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+ 
 	/**
 	 * Gives the short name of the attribute
 	 * e.g. java.lang.String will return String
