@@ -97,11 +97,11 @@ public class FaceletsMojo extends BaseFacesMojo{
 			writer.write("\t\t<tag-name>");
 			writer.write(component.getTag());
 			writer.write("</tag-name>\n");
-            writer.write("\t\t<description>");
+            writer.write("\t\t<description><![CDATA[");
             if(component.getDescription() != null) {
             	writer.write(component.getDescription());
             }
-			writer.write("</description>\n");
+			writer.write("]]></description>\n");
 			writer.write("\t\t<component>\n");
 			writer.write("\t\t\t<component-type>");
 			writer.write(component.getComponentType());
@@ -127,11 +127,11 @@ public class FaceletsMojo extends BaseFacesMojo{
 
                 writer.write("\t\t<attribute>\n");
 
-                writer.write("\t\t\t<description>");
+                writer.write("\t\t\t<description><![CDATA[");
                 if(attribute.getDescription() != null) {
                     writer.write(attribute.getDescription());
                 }
-                writer.write("</description>\n");
+                writer.write("]]></description>\n");
 
                 writer.write("\t\t\t<name>");
                 writer.write(attribute.getName());
