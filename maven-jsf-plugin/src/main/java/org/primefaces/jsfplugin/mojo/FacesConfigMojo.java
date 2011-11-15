@@ -46,6 +46,16 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	 * @parameter
 	 */
 	protected String standardRenderersConfig;
+    
+    /**
+	 * @parameter
+	 */
+	protected String renderKitId;
+    
+    /**
+	 * @parameter
+	 */
+	protected String renderKitClass;
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating faces-config.xml");
@@ -127,6 +137,11 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	
 	private void writeRenderers(BufferedWriter writer, List components) throws IOException{
 		writer.write("\t<render-kit>\n");
+        
+        if(renderKitId != null) {
+            writer.write("\t\t<render-kit-id>" + renderKitId + "</render-kit-id>\n");
+            writer.write("\t\t<render-kit-class>" + renderKitClass + "</render-kit-class>\n");
+        }
         
         //Standard Renderers
         try {
