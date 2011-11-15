@@ -41,6 +41,11 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	 * @parameter
 	 */
 	protected String standardFacesConfig;
+    
+    /**
+	 * @parameter
+	 */
+	protected String standardRenderersConfig;
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating faces-config.xml");
@@ -123,20 +128,21 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	private void writeRenderers(BufferedWriter writer, List components) throws IOException{
 		writer.write("\t<render-kit>\n");
         
-        //Custom HeadRenderer for JSF2
-		if(isJSF2()) {
-            writer.write("\t\t<client-behavior-renderer>\n");
-			writer.write("\t\t\t<client-behavior-renderer-type>org.primefaces.component.AjaxBehaviorRenderer</client-behavior-renderer-type>\n");
-			writer.write("\t\t\t<client-behavior-renderer-class>org.primefaces.component.behavior.ajax.AjaxBehaviorRenderer</client-behavior-renderer-class>\n");
-			writer.write("\t\t</client-behavior-renderer>\n");
-            
-			writer.write("\t\t<renderer>\n");
-			writer.write("\t\t\t<component-family>javax.faces.Output</component-family>\n");
-			writer.write("\t\t\t<renderer-type>javax.faces.Head</renderer-type>\n");
-			writer.write("\t\t\t<renderer-class>org.primefaces.renderkit.HeadRenderer</renderer-class>\n");
-			writer.write("\t\t</renderer>\n");
+        //Standard Renderers
+        try {
+			File template = new File(project.getBasedir() + File.separator + standardRenderersConfig);
+			FileReader fileReader = new FileReader(template);
+			BufferedReader reader = new BufferedReader(fileReader);
+			String line = null;
+			
+			while((line = reader.readLine()) != null) {
+				writer.write(line);
+				writer.write("\n");
+			}
+		}catch(FileNotFoundException fileNotFoundException) {
+			return;
 		}
-		
+        		
 		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
 			Component component = (Component) iterator.next();
 			if(component.getRendererType() == null)
