@@ -163,7 +163,7 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 	protected String getLicense() {
         String license = "/*\n * Generated, Do Not Modify\n */\n" +
                         "/*\n"+
-						" * Copyright 2010 Prime Technology.\n" +
+						" * Copyright 2009-2012 Prime Teknoloji.\n" +
 						" *\n" + 
 						" * Licensed under the Apache License, Version 2.0 (the \"License\");\n"+
 						" * you may not use this file except in compliance with the License.\n" +
