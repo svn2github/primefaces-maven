@@ -48,18 +48,24 @@ public class CSSCompressorMojo extends AbstractMojo {
                 + "META-INF" + File.separator + "resources" + File.separator + "primefaces";
 
         if(theme) {
-            outputDirectoryPath += "-" + project.getArtifactId();
+            processPath(outputDirectoryPath + "-" + project.getArtifactId());
         }
-
-        File outputDirectory = new File(outputDirectoryPath);
+        else {
+            processPath(outputDirectoryPath);
+            processPath(outputDirectoryPath + "-aristo");
+        }
+    }
+    
+    private void processPath(String path) throws MojoExecutionException {
+        File folder = new File(path);
         
-        if(outputDirectory.exists()) {
-            processFolder(outputDirectory);
+        if(folder.exists()) {
+            processFolder(folder);
         }
     }
 
-    private void processFolder(File file) throws MojoExecutionException {
-        File[] resources = file.listFiles();
+    private void processFolder(File folder) throws MojoExecutionException {        
+        File[] resources = folder.listFiles();
         
         for(File resource : resources) {
             if(resource.getName().endsWith("css")) {
@@ -67,7 +73,8 @@ public class CSSCompressorMojo extends AbstractMojo {
 
                 try {
                     processCSS(resource);
-                }catch(IOException e) {
+                }
+                catch(IOException e) {
                     throw new MojoExecutionException("IOException in compressing CSS", e);
                 }
             }
