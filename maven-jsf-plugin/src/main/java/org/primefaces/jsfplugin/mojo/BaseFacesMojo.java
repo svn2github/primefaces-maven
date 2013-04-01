@@ -213,10 +213,6 @@ public abstract class BaseFacesMojo extends AbstractMojo{
 		writer.write(getLicense());
 	}
 	
-	protected void writeFacesContextGetter(BufferedWriter writer) throws IOException {
-		writer.write("\n\tprotected FacesContext getFacesContext() {\n\t\treturn FacesContext.getCurrentInstance();\n\t}\n");
-	}
-	
 	protected void writeResourceHolderGetter(BufferedWriter writer) throws IOException{
 		writer.write("\n\tprotected ResourceHolder getResourceHolder() {\n");
 		writer.write("\t\tFacesContext facesContext = getFacesContext();\n");

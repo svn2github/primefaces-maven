@@ -83,7 +83,6 @@ public class ComponentMojo extends BaseFacesMojo{
 		writeComponentFamily(writer, component);
 		writeAttributes(writer, component);
 		writeTemplate(writer, component);
-		writeFacesContextGetter(writer);
 
         if(component.isWidget()) {
             writeWidgetVarResolver(writer);
@@ -471,7 +470,7 @@ public class ComponentMojo extends BaseFacesMojo{
 
     protected void writeWidgetVarResolver(BufferedWriter writer) throws IOException {
         writer.write("\tpublic String resolveWidgetVar() {\n");
-        writer.write("\t\tFacesContext context = FacesContext.getCurrentInstance();\n");
+        writer.write("\t\tFacesContext context = getFacesContext();\n");
         writer.write("\t\tString userWidgetVar = (String) getAttributes().get(\"widgetVar\");\n\n");
         writer.write("\t\tif(userWidgetVar != null)\n");
         writer.write("\t\t\treturn userWidgetVar;\n");
