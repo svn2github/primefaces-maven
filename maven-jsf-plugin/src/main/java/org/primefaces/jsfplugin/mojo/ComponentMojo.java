@@ -38,7 +38,7 @@ import org.primefaces.jsfplugin.util.FacesMojoUtils;
 /**
  * @goal generate-components
  */
-public class ComponentMojo extends BaseFacesMojo{
+public class ComponentMojo extends BaseFacesMojo {
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("Generating Components");
@@ -87,41 +87,8 @@ public class ComponentMojo extends BaseFacesMojo{
         if(component.isWidget()) {
             writeWidgetVarResolver(writer);
         }
-		
-		if(isJSF2()) {
-			writerAttributeHandler(writer);
-		} else {
-			writeSaveState(writer, component);
-			writeRestoreState(writer, component);
-			writeResourceHolderGetter(writer);
-		}
+
 		writer.write("}");
-	}
-	
-	private void writerAttributeHandler(BufferedWriter writer) throws IOException {
-		writer.write("\n\tpublic void handleAttribute(String name, Object value) {\n");
-		writer.write("\t\tList<String> setAttributes = (List<String>) this.getAttributes().get(\"javax.faces.component.UIComponentBase.attributesThatAreSet\");\n");
-		writer.write("\t\tif(setAttributes == null) {\n");
-		writer.write("\t\t\tString cname = this.getClass().getName();\n");
-		writer.write("\t\t\tif(cname != null && cname.startsWith(OPTIMIZED_PACKAGE)) {\n");
-		writer.write("\t\t\t\tsetAttributes = new ArrayList<String>(6);\n");
-		writer.write("\t\t\t\tthis.getAttributes().put(\"javax.faces.component.UIComponentBase.attributesThatAreSet\", setAttributes);\n");
-		writer.write("\t\t\t}\n");
-		writer.write("\t\t}\n");
-		
-		writer.write("\t\tif(setAttributes != null) {\n");
-		writer.write("\t\t\tif(value == null) {\n");
-		writer.write("\t\t\t\tValueExpression ve = getValueExpression(name);\n");
-		writer.write("\t\t\t\tif(ve == null) {\n");
-		writer.write("\t\t\t\t\tsetAttributes.remove(name);\n");
-		writer.write("\t\t\t\t}");
-		writer.write(" else if(!setAttributes.contains(name)) {\n");
-		writer.write("\t\t\t\t\tsetAttributes.add(name);\n");
-		writer.write("\t\t\t\t}\n");
-		writer.write("\t\t\t}\n");
-		writer.write("\t\t}\n");
-		
-		writer.write("\t}\n");
 	}
 
 	private void writeImports(BufferedWriter writer, Component component) throws IOException {
@@ -132,17 +99,12 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("import javax.el.MethodExpression;\n");
 		writer.write("import javax.faces.render.Renderer;\n");
 		writer.write("import java.io.IOException;\n");
-		
-		if(isJSF2()) {
-			writer.write("import javax.faces.component.UIComponent;\n");
-			writer.write("import javax.faces.event.AbortProcessingException;\n");
-            writer.write("import javax.faces.application.ResourceDependencies;\n");
-            writer.write("import javax.faces.application.ResourceDependency;\n");
-            writer.write("import java.util.List;\n");
-            writer.write("import java.util.ArrayList;\n");
-		} else {
-			writer.write("import org.primefaces.resource.ResourceHolder;\n");
-		}
+        writer.write("import javax.faces.component.UIComponent;\n");
+        writer.write("import javax.faces.event.AbortProcessingException;\n");
+        writer.write("import javax.faces.application.ResourceDependencies;\n");
+        writer.write("import javax.faces.application.ResourceDependency;\n");
+        writer.write("import java.util.List;\n");
+        writer.write("import java.util.ArrayList;\n");
 		
 		String templateImports = getTemplateImports(component);
 		
@@ -156,80 +118,66 @@ public class ComponentMojo extends BaseFacesMojo{
 		writer.write("\tpublic static final String COMPONENT_TYPE = \"" + component.getComponentType() + "\";\n");
 		writer.write("\tpublic static final String COMPONENT_FAMILY = \"" + component.getComponentFamily() + "\";\n");
 		
-		if(component.getRendererType() != null)
+		if(component.getRendererType() != null) {
 			writer.write("\tprivate static final String DEFAULT_RENDERER = \"" + component.getRendererType() + "\";\n");
-		
-		if(isJSF2()) {
-			writer.write("\tprivate static final String OPTIMIZED_PACKAGE = \"org.primefaces.component.\";\n");
-		}
-		
+        }
+				
 		writer.write("\n");
 	}
 	
 	private void writeAttributesDeclarations(BufferedWriter writer, Component component) throws IOException {
 		boolean firstWritten = false;
-		if(isJSF2()) {
-			writer.write("\tprotected enum PropertyKeys {\n");
-		}
+		writer.write("\tprotected enum PropertyKeys {\n");
 		
 		for(Iterator<Attribute> attributeIterator = component.getAttributes().iterator(); attributeIterator.hasNext();) {
 			Attribute attribute = attributeIterator.next();
 			if(attribute.isIgnored())
 				continue;
 			
-			if(isJSF2()) {
-				writer.write("\n");
+			writer.write("\n");
 				
-				if(!firstWritten) {
-					writer.write("\t\t");
-					firstWritten = true;
-				}
-				else
-					writer.write("\t\t,");
-					
-				if(attribute.getName().equals("for"))
-					writer.write("forValue(\"for\")");
-				else
-					writer.write(attribute.getName());
+            if(!firstWritten) {
+                writer.write("\t\t");
+                firstWritten = true;
+            }
+            else
+                writer.write("\t\t,");
 
-			} else {
-				writer.write("\tprivate " + attribute.getType() + " _" + attribute.getName() + ";\n");
-			}
+            if(attribute.getName().equals("for"))
+                writer.write("forValue(\"for\")");
+            else
+                writer.write(attribute.getName());
 		}
 		
-		if(isJSF2()) {
-			writer.write(";\n");
+		writer.write(";\n");
 			
-			writer.write("\n\t\tString toString;\n\n");
-			 
-			writer.write("\t\tPropertyKeys(String toString) {\n");
-			writer.write("\t\t\tthis.toString = toString;\n");
-			writer.write("\t\t}\n\n");
-			
-			writer.write("\t\tPropertyKeys() {}\n\n");
-			
-			writer.write("\t\tpublic String toString() {\n");
-			writer.write("\t\t\treturn ((this.toString != null) ? this.toString : super.toString());");
-			writer.write("\n}\n");
+        writer.write("\n\t\tString toString;\n\n");
 
-			writer.write("\t}\n\n");
-		}
+        writer.write("\t\tPropertyKeys(String toString) {\n");
+        writer.write("\t\t\tthis.toString = toString;\n");
+        writer.write("\t\t}\n\n");
+
+        writer.write("\t\tPropertyKeys() {}\n\n");
+
+        writer.write("\t\tpublic String toString() {\n");
+        writer.write("\t\t\treturn ((this.toString != null) ? this.toString : super.toString());");
+        writer.write("\n}\n");
+
+        writer.write("\t}\n\n");
 	}
 	
 	private void writeClassDeclaration(BufferedWriter writer, Component component) throws IOException {
-		if(isJSF2()) {
-            writer.write("@ResourceDependencies({\n");
-            
-            for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
-                Resource resource = (Resource) iterator.next();
+		writer.write("@ResourceDependencies({\n");  
+        for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
+            Resource resource = (Resource) iterator.next();
 
-                writer.write("\t@ResourceDependency(library=\"primefaces\", name=\"" + resource.getName() + "\")");
+            writer.write("\t@ResourceDependency(library=\"primefaces\", name=\"" + resource.getName() + "\")");
 
-                if(iterator.hasNext())
-                    writer.write(",\n");
-            }
-            writer.write("\n})");
-		}
+            if(iterator.hasNext())
+                writer.write(",\n");
+        }
+        writer.write("\n})");
+        
 		writer.write("\npublic class " + component.getComponentShortName() + " extends " + component.getParentShortName());
 		
 		if(!component.getInterfaces().isEmpty()) {
@@ -255,20 +203,7 @@ public class ComponentMojo extends BaseFacesMojo{
 			writer.write("\t\tsetRendererType(DEFAULT_RENDERER);\n");
 		else
 			writer.write("\t\tsetRendererType(null);\n");
-		
-		if(!isJSF2()) {
-			writer.write("\t\tResourceHolder resourceHolder = getResourceHolder();\n");
-			writer.write("\t\tif(resourceHolder != null) {\n");
-			
-			for (Iterator iterator = component.getResources().iterator(); iterator.hasNext();) {
-				Resource resource = (Resource) iterator.next();
 				
-				writer.write("\t\t\tresourceHolder.addResource(\"" + resource.getName() + "\");\n");
-			}
-			
-			writer.write("\t\t}\n");
-		}
-		
 		writer.write("\t}");
 		writer.write("\n\n");
 	}
@@ -286,58 +221,29 @@ public class ComponentMojo extends BaseFacesMojo{
 			if(attribute.isIgnored())
 				continue;
 			
-			if(isJSF2()) {
-				String propertyKeyName = attribute.getName().equalsIgnoreCase("for") ? "forValue" : attribute.getName();
-				//getter
-				if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
-					writer.write("\tpublic " + FacesMojoUtils.toPrimitive(attribute.getType()) + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
-				else
-					writer.write("\tpublic " + attribute.getType() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
-				
-				if(attribute.getDefaultValue() == null)
-					writer.write("\t\treturn (" + attribute.getType() + ") getStateHelper().eval(PropertyKeys." + propertyKeyName + ");\n");
-				else
-					writer.write("\t\treturn (" + attribute.getType() + ") getStateHelper().eval(PropertyKeys." + propertyKeyName + ", " + attribute.getDefaultValue() + ");\n");
-				
-				writer.write("\t}\n");
-				
-				//setter
-				if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
-					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.toPrimitive(attribute.getType()) + " _" + attribute.getName() + ") {\n");
-				else
-					writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " _" + attribute.getName() + ") {\n");
-				
-				writer.write("\t\tgetStateHelper().put(PropertyKeys." + propertyKeyName + ", _" + attribute.getName() + ");\n");
-				writer.write("\t\thandleAttribute(\"" + propertyKeyName + "\", _" + attribute.getName() + ");\n");
-				
-				writer.write("\t}\n\n");
-			} else {
-				if(isMethodExpression(attribute)) {
-					writeMethodExpressionAttribute(writer, attribute);
-				} else {
-					if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
-						writer.write("\tpublic " + FacesMojoUtils.toPrimitive(attribute.getType()) + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
-					else
-						writer.write("\tpublic " + attribute.getType() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
-						
-					writer.write("\t\tif(_" + attribute.getName() + " != null )\n");
-					writer.write("\t\t\treturn _" + attribute.getName() + ";\n"); 
-					writer.write("\n");
-					
-					writer.write("\t\tValueExpression ve = getValueExpression(\"" + attribute.getName() + "\");\n");
-					writer.write("\t\treturn ve != null ? (" + attribute.getType() + ") ve.getValue(getFacesContext().getELContext())  : " + attribute.getDefaultValue() + ";\n");
-					writer.write("\t}\n");
-					
-					if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
-						writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.toPrimitive(attribute.getType()) + " _" + attribute.getName() + ") {\n");
-					else
-						writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " _" + attribute.getName() + ") {\n");
-					
-					writer.write("\t\tthis._" + attribute.getName() + " = _" + attribute.getName() + ";\n");
-					
-					writer.write("\t}\n\n");
-				}
-			}
+			String propertyKeyName = attribute.getName().equalsIgnoreCase("for") ? "forValue" : attribute.getName();
+            //getter
+            if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
+                writer.write("\tpublic " + FacesMojoUtils.toPrimitive(attribute.getType()) + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
+            else
+                writer.write("\tpublic " + attribute.getType() + " " + resolveGetterPrefix(attribute) + attribute.getCapitalizedName() + "() {\n");
+
+            if(attribute.getDefaultValue() == null)
+                writer.write("\t\treturn (" + attribute.getType() + ") getStateHelper().eval(PropertyKeys." + propertyKeyName + ");\n");
+            else
+                writer.write("\t\treturn (" + attribute.getType() + ") getStateHelper().eval(PropertyKeys." + propertyKeyName + ", " + attribute.getDefaultValue() + ");\n");
+
+            writer.write("\t}\n");
+
+            //setter
+            if(FacesMojoUtils.shouldPrimitize(attribute.getType()))
+                writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + FacesMojoUtils.toPrimitive(attribute.getType()) + " _" + attribute.getName() + ") {\n");
+            else
+                writer.write("\tpublic void set" + attribute.getCapitalizedName() + "(" + attribute.getType() + " _" + attribute.getName() + ") {\n");
+
+            writer.write("\t\tgetStateHelper().put(PropertyKeys." + propertyKeyName + ", _" + attribute.getName() + ");\n");
+
+            writer.write("\t}\n\n");
 		}
 	}
 	

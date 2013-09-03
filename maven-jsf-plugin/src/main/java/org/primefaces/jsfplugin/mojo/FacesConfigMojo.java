@@ -94,8 +94,8 @@ public class FacesConfigMojo extends BaseFacesMojo{
 	}
 
 	private void writeFacesConfigBegin(BufferedWriter writer, List components) throws IOException {
-		String version = isJSF2() ? "2.0" : "1.2";
-		String xsdVersion = isJSF2() ? "2_0" : "1_2";
+		String version = "2.0";
+		String xsdVersion = "2_0";
 		
 		writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		writer.write("<faces-config version=\"" + version + "\" xmlns=\"http://java.sun.com/xml/ns/javaee\"\n");
